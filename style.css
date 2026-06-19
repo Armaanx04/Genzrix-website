@@ -177,12 +177,12 @@ p {
 .btn-secondary {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 08px;
   background: transparent;
   color: var(--navy);
   font-family: 'Inter', sans-serif;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 16px;
   padding: 13px 32px;
   border-radius: 8px;
   border: 1.5px solid var(--divider);
@@ -258,22 +258,26 @@ p {
 .nav-logo {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 04px;
   flex-shrink: 0;
   text-decoration: none;
+  position: relative;
+top: -1px;
 }
 
 .nav-logo-mark {
-  width: 48px;
-  height: 48px;
+  width: 50px;
+  height: 50px;
   background: url('/GenZrix_Logo_Just_G_.png') center center / contain no-repeat;
   flex-shrink: 0;
+  position: relative;
+top: -3px;
 }
 
 .nav-wordmark {
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 800;
-  font-size: 20px;
+  font-size: 24px;
   letter-spacing: 1.5px;
   color: var(--navy);
   text-transform: uppercase;
@@ -507,7 +511,7 @@ p {
 .ecosystem-card {
   position: relative;
   width: 100%;
-  max-width: 420px;
+  max-width: 630px;
   aspect-ratio: 1;
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(20px);
@@ -519,6 +523,7 @@ p {
     0 1px 4px rgba(11, 31, 75, 0.04),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
   overflow: hidden;
+  animation: float 6s ease-in-out infinite;
 }
 
 /* Logo watermark behind ecosystem */
@@ -640,13 +645,13 @@ p {
 .ecosystem-wrap {
   position: relative;
   z-index: 2;
-  width: 100%;
+  width: 400%;
   max-width: 700px;
   margin: 60px auto 0;
 }
 
 .ecosystem-svg {
-  width: 100%;
+  width: 1400%;
   height: auto;
 }
 
@@ -2141,10 +2146,10 @@ p {
 /* ── RESPONSIVE: 375px ── */
 @media (max-width: 375px) {
   h1 { font-size: 32px; }
-  h2 { font-size: 22px; }
+  h2 { font-size: 24px; }
   .nav-inner { padding: 0 16px; }
-  .nav-wordmark { font-size: 16px; letter-spacing: 1px; }
-  .nav-logo-mark { width: 48px; height: 48px; }
+  .nav-wordmark { font-size: 14px; letter-spacing: 1px; }
+  .nav-logo-mark { width: 55px; height: 55px; }
   .container { padding: 0 16px; }
   .hero { padding: 96px 16px 48px; }
   .service-full-card { padding: 24px 18px; }
@@ -2199,4 +2204,17 @@ p {
     font-size: 13px;
     padding: 11px 20px;
   }
+}
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
 }
