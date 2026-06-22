@@ -303,6 +303,141 @@ document.addEventListener('DOMContentLoaded', () => {
     portfolioGrid.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
   }
 
+  /* ── SERVICES SHOWCASE TABS ── */
+  const serviceShowcase = document.querySelector('[data-service-showcase]');
+  const scrollRoot = document.querySelector('[data-service-scroll]');
+  if (serviceShowcase && scrollRoot) {
+    const pinEl = scrollRoot.querySelector('.services-showcase-pin');
+    const tabs = [...serviceShowcase.querySelectorAll('[role="tab"]')];
+    const panels = [...serviceShowcase.querySelectorAll('[role="tabpanel"]')];
+    const card = serviceShowcase.querySelector('.services-showcase-card');
+    const counterEl = serviceShowcase.querySelector('.services-showcase-counter');
+    const indexEl = serviceShowcase.querySelector('[data-service-index]');
+    const panelsWrap = serviceShowcase.querySelector('.services-showcase-panels');
+    let currentIndex = 0;
+    let scrollTicking = false;
+    const DURATION = 400;
+    const STEP_VH = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0.35 : 0.62;
+
+    const syncPanelHeight = () => {
+      const maxHeight = panels.reduce((max, panel) => Math.max(max, panel.offsetHeight), 320);
+      panelsWrap.style.minHeight = `${maxHeight + 60}px`;
+    };
+
+    const getRootTop = () => scrollRoot.getBoundingClientRect().top + window.scrollY;
+
+    const updateScrollHeight = () => {
+      syncPanelHeight();
+      const pinHeight = pinEl.offsetHeight;
+      const stepHeight = window.innerHeight * STEP_VH;
+      const scrollDistance = Math.max(0, (panels.length - 1) * stepHeight);
+      scrollRoot.style.height = `${pinHeight + scrollDistance}px`;
+    };
+
+    const getIndexFromScroll = () => {
+      const rootTop = getRootTop();
+      const scrollable = Math.max(1, scrollRoot.offsetHeight - window.innerHeight);
+      const scrolled = window.scrollY - rootTop;
+
+      if (scrolled <= 0) return 0;
+      if (scrolled >= scrollable) return panels.length - 1;
+
+      const progress = scrolled / scrollable;
+      return Math.min(panels.length - 1, Math.floor(progress * panels.length));
+    };
+
+    const activateTab = (index) => {
+      tabs.forEach((tab, i) => {
+        const isActive = i === index;
+        tab.classList.toggle('active', isActive);
+        tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        tab.tabIndex = isActive ? 0 : -1;
+      });
+
+      const activeTab = tabs[index];
+      if (activeTab) {
+        const tabsWrap = activeTab.closest('.services-showcase-tabs');
+        if (tabsWrap) {
+          const tabRect = activeTab.getBoundingClientRect();
+          const wrapRect = tabsWrap.getBoundingClientRect();
+          if (tabRect.left < wrapRect.left || tabRect.right > wrapRect.right) {
+            activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          }
+        }
+      }
+    };
+
+    const switchService = (index) => {
+      if (index < 0 || index >= panels.length || index === currentIndex) return;
+
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const prevPanel = panels[currentIndex];
+      const nextPanel = panels[index];
+      const accent = nextPanel.dataset.accent;
+
+      activateTab(index);
+      if (card && accent) card.dataset.accent = accent;
+      if (counterEl) counterEl.textContent = `${index + 1} / ${panels.length}`;
+      if (indexEl) indexEl.textContent = String(index + 1);
+
+      prevPanel.classList.remove('is-active');
+      if (!reducedMotion) prevPanel.classList.add('is-exiting');
+
+      nextPanel.classList.remove('is-active', 'is-exiting');
+      void nextPanel.offsetWidth;
+      requestAnimationFrame(() => {
+        nextPanel.classList.add('is-active');
+      });
+
+      window.setTimeout(() => {
+        prevPanel.classList.remove('is-exiting');
+      }, reducedMotion ? 150 : DURATION);
+
+      currentIndex = index;
+    };
+
+    const scrollToIndex = (index) => {
+      const rootTop = getRootTop();
+      const scrollable = Math.max(1, scrollRoot.offsetHeight - window.innerHeight);
+      const targetY = rootTop + ((index + 0.5) / panels.length) * scrollable;
+      window.scrollTo({ top: targetY, behavior: 'smooth' });
+    };
+
+    const onScroll = () => {
+      if (scrollTicking) return;
+      scrollTicking = true;
+      requestAnimationFrame(() => {
+        switchService(getIndexFromScroll());
+        scrollTicking = false;
+      });
+    };
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => scrollToIndex(index));
+      tab.addEventListener('keydown', (e) => {
+        let nextIndex = null;
+        if (e.key === 'ArrowRight') nextIndex = (index + 1) % tabs.length;
+        if (e.key === 'ArrowLeft') nextIndex = (index - 1 + tabs.length) % tabs.length;
+        if (e.key === 'Home') nextIndex = 0;
+        if (e.key === 'End') nextIndex = tabs.length - 1;
+        if (nextIndex !== null) {
+          e.preventDefault();
+          tabs[nextIndex].focus();
+          scrollToIndex(nextIndex);
+        }
+      });
+    });
+
+    updateScrollHeight();
+    onScroll();
+    window.requestAnimationFrame(updateScrollHeight);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', () => {
+      updateScrollHeight();
+      onScroll();
+    }, { passive: true });
+  }
+
   /* ── PORTFOLIO FILTER ── */
   const filterBtns = document.querySelectorAll('.filter-btn');
   if (filterBtns.length && portfolioGrid) {
