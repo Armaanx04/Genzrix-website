@@ -55,18 +55,20 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* ── SCROLL ANIMATIONS ── */
-  const fadeEls = document.querySelectorAll('.fade-up');
-  if (fadeEls.length) {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-    fadeEls.forEach(el => observer.observe(el));
-  }
+  const fadeObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        fadeObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  const observeFadeUps = (root = document) => {
+    root.querySelectorAll('.fade-up:not(.visible)').forEach(el => fadeObserver.observe(el));
+  };
+
+  observeFadeUps();
 
   /* ── HERO WORD STAGGER ── */
   document.querySelectorAll('.hero-word').forEach((word, i) => {
@@ -303,10 +305,11 @@ document.addEventListener('DOMContentLoaded', () => {
     portfolioGrid.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
   }
 
-  /* ── SERVICES SHOWCASE TABS ── */
-  const serviceShowcase = document.querySelector('[data-service-showcase]');
-  const scrollRoot = document.querySelector('[data-service-scroll]');
-  if (serviceShowcase && scrollRoot) {
+  /* ── SERVICES SHOWCASE (scroll-driven) ── */
+  function initServicesShowcase(scrollRoot) {
+    const serviceShowcase = scrollRoot.querySelector('[data-service-showcase]');
+    if (!serviceShowcase) return;
+
     const pinEl = scrollRoot.querySelector('.services-showcase-pin');
     const tabs = [...serviceShowcase.querySelectorAll('[role="tab"]')];
     const panels = [...serviceShowcase.querySelectorAll('[role="tabpanel"]')];
@@ -316,8 +319,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const panelsWrap = serviceShowcase.querySelector('.services-showcase-panels');
     let currentIndex = 0;
     let scrollTicking = false;
-    const DURATION = 400;
-    const STEP_VH = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0.35 : 0.62;
+    const DURATION = 550;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const STEP_VH = reducedMotion ? 0.5 : 1;
+
+    const getStepHeight = () => window.innerHeight * STEP_VH;
 
     const syncPanelHeight = () => {
       const maxHeight = panels.reduce((max, panel) => Math.max(max, panel.offsetHeight), 320);
@@ -329,21 +335,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateScrollHeight = () => {
       syncPanelHeight();
       const pinHeight = pinEl.offsetHeight;
-      const stepHeight = window.innerHeight * STEP_VH;
+      const stepHeight = getStepHeight();
       const scrollDistance = Math.max(0, (panels.length - 1) * stepHeight);
       scrollRoot.style.height = `${pinHeight + scrollDistance}px`;
     };
 
     const getIndexFromScroll = () => {
       const rootTop = getRootTop();
-      const scrollable = Math.max(1, scrollRoot.offsetHeight - window.innerHeight);
       const scrolled = window.scrollY - rootTop;
+      const stepHeight = getStepHeight();
+      const maxIndex = panels.length - 1;
 
       if (scrolled <= 0) return 0;
-      if (scrolled >= scrollable) return panels.length - 1;
+      if (scrolled >= maxIndex * stepHeight) return maxIndex;
 
-      const progress = scrolled / scrollable;
-      return Math.min(panels.length - 1, Math.floor(progress * panels.length));
+      return Math.min(maxIndex, Math.floor(scrolled / stepHeight));
     };
 
     const activateTab = (index) => {
@@ -361,7 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const tabRect = activeTab.getBoundingClientRect();
           const wrapRect = tabsWrap.getBoundingClientRect();
           if (tabRect.left < wrapRect.left || tabRect.right > wrapRect.right) {
-            activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            activeTab.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
           }
         }
       }
@@ -370,7 +376,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const switchService = (index) => {
       if (index < 0 || index >= panels.length || index === currentIndex) return;
 
-      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const prevPanel = panels[currentIndex];
       const nextPanel = panels[index];
       const accent = nextPanel.dataset.accent;
@@ -380,13 +385,21 @@ document.addEventListener('DOMContentLoaded', () => {
       if (counterEl) counterEl.textContent = `${index + 1} / ${panels.length}`;
       if (indexEl) indexEl.textContent = String(index + 1);
 
+      panels.forEach((panel, i) => {
+        if (i !== currentIndex && i !== index) {
+          panel.classList.remove('is-active', 'is-exiting');
+        }
+      });
+
       prevPanel.classList.remove('is-active');
       if (!reducedMotion) prevPanel.classList.add('is-exiting');
 
       nextPanel.classList.remove('is-active', 'is-exiting');
       void nextPanel.offsetWidth;
       requestAnimationFrame(() => {
-        nextPanel.classList.add('is-active');
+        requestAnimationFrame(() => {
+          nextPanel.classList.add('is-active');
+        });
       });
 
       window.setTimeout(() => {
@@ -398,8 +411,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const scrollToIndex = (index) => {
       const rootTop = getRootTop();
-      const scrollable = Math.max(1, scrollRoot.offsetHeight - window.innerHeight);
-      const targetY = rootTop + ((index + 0.5) / panels.length) * scrollable;
+      const stepHeight = getStepHeight();
+      const targetY = rootTop + index * stepHeight + stepHeight * 0.15;
       window.scrollTo({ top: targetY, behavior: 'smooth' });
     };
 
@@ -428,6 +441,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
+    observeFadeUps(scrollRoot);
     updateScrollHeight();
     onScroll();
     window.requestAnimationFrame(updateScrollHeight);
@@ -437,6 +451,25 @@ document.addEventListener('DOMContentLoaded', () => {
       onScroll();
     }, { passive: true });
   }
+
+  async function mountServicesShowcase() {
+    const mount = document.querySelector('[data-services-showcase-mount]');
+    if (!mount) return;
+
+    try {
+      const response = await fetch('/partials/services-showcase.html');
+      if (!response.ok) throw new Error('Failed to load services showcase');
+      mount.innerHTML = await response.text();
+      mount.removeAttribute('aria-busy');
+      const scrollRoot = mount.querySelector('[data-service-scroll]');
+      if (scrollRoot) initServicesShowcase(scrollRoot);
+    } catch (error) {
+      console.error(error);
+      mount.removeAttribute('aria-busy');
+    }
+  }
+
+  mountServicesShowcase();
 
   /* ── PORTFOLIO FILTER ── */
   const filterBtns = document.querySelectorAll('.filter-btn');
