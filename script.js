@@ -314,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabs = [...serviceShowcase.querySelectorAll('[role="tab"]')];
     const panels = [...serviceShowcase.querySelectorAll('[role="tabpanel"]')];
     const card = serviceShowcase.querySelector('.services-showcase-card');
-    const counterEl = serviceShowcase.querySelector('.services-showcase-counter');
+    const counterEl = serviceShowcase.querySelector('[data-service-counter]');
     const indexEl = serviceShowcase.querySelector('[data-service-index]');
     const panelsWrap = serviceShowcase.querySelector('.services-showcase-panels');
     let currentIndex = 0;
@@ -326,8 +326,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const getStepHeight = () => window.innerHeight * STEP_VH;
 
     const syncPanelHeight = () => {
-      const maxHeight = panels.reduce((max, panel) => Math.max(max, panel.offsetHeight), 320);
-      panelsWrap.style.minHeight = `${maxHeight + 60}px`;
+      const maxHeight = panels.reduce((max, panel) => Math.max(max, panel.offsetHeight), 380);
+      panelsWrap.style.minHeight = `${maxHeight + 72}px`;
     };
 
     const getRootTop = () => scrollRoot.getBoundingClientRect().top + window.scrollY;
@@ -373,6 +373,37 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
 
+    const restartPanelVisuals = (panel) => {
+      if (reducedMotion || !panel) return;
+      const animated = panel.querySelectorAll(
+        '.sv-chart-line, .sv-glow-path, .sv-roadmap-fill, .sv-timeline-progress'
+      );
+      animated.forEach((el) => {
+        el.style.animation = 'none';
+        void el.offsetWidth;
+        el.style.animation = '';
+      });
+    };
+
+    const updateVisualParallax = (index) => {
+      if (reducedMotion) return;
+      const panel = panels[index];
+      if (!panel) return;
+      const visual = panel.querySelector('.services-showcase-visual');
+      if (!visual) return;
+
+      const rootTop = getRootTop();
+      const stepHeight = getStepHeight();
+      const scrolled = Math.max(0, window.scrollY - rootTop);
+      const stepProgress = stepHeight > 0 ? (scrolled - index * stepHeight) / stepHeight : 0;
+      const eased = Math.max(-1, Math.min(1, (stepProgress - 0.5) * 2));
+      const offsetY = eased * 10;
+      const offsetX = eased * 4;
+
+      visual.style.setProperty('--sv-parallax-y', `${offsetY.toFixed(2)}px`);
+      visual.style.setProperty('--sv-parallax-x', `${offsetX.toFixed(2)}px`);
+    };
+
     const switchService = (index) => {
       if (index < 0 || index >= panels.length || index === currentIndex) return;
 
@@ -399,6 +430,7 @@ document.addEventListener('DOMContentLoaded', () => {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           nextPanel.classList.add('is-active');
+          restartPanelVisuals(nextPanel);
         });
       });
 
@@ -407,6 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }, reducedMotion ? 150 : DURATION);
 
       currentIndex = index;
+      updateVisualParallax(index);
     };
 
     const scrollToIndex = (index) => {
@@ -421,6 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
       scrollTicking = true;
       requestAnimationFrame(() => {
         switchService(getIndexFromScroll());
+        updateVisualParallax(currentIndex);
         scrollTicking = false;
       });
     };
