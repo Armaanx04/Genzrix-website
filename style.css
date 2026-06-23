@@ -54,7 +54,8 @@ ul { list-style: none; }
   --muted-light: #8A9BB5;
   --divider:     rgba(11,31,75,0.09);
   --divider-dark:rgba(255,255,255,0.09);
-  --max-w:       1100px;
+  --max-w: 1200px;
+  --nav-max-w: 1400px;
 
   /* Shadows */
   --shadow-xs:   0 1px 4px rgba(11,31,75,0.06);
@@ -246,9 +247,9 @@ p {
 }
 
 .nav-inner {
-  max-width: var(--max-w);
+  max-width: var(--nav-max-w);
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 0 clamp(16px, 3vw, 32px);
   height: 68px;
   display: flex;
   align-items: center;
@@ -309,18 +310,19 @@ top: -3px;
 }
 
 .nav-links a.active {
-  color: var(--white);
+  color: var(--navy);
   font-weight: 600;
-  background: var(--navy);
+  background: var(--white);
   position: relative;
 }
 
 .nav-links a.active::after {
   content: '';
   position: absolute;
-  bottom: 6px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: -2px;    
+  top: 50%;         
+  transform: translateY(-50%);
+
   width: 4px;
   height: 4px;
   background: var(--red);
@@ -566,7 +568,7 @@ top: -3px;
   font-weight: 700;
   color: var(--navy);
   letter-spacing: 2.5px;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .hero-badge-dot {
