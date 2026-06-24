@@ -23,6 +23,7 @@
       </a>
       <nav class="nav-links" aria-label="Primary navigation">
         <a href="index.html" class="active">Home</a>
+        <a href="about.html">About Us</a>
         <a href="services.html">Services</a>
         <a href="work.html">Our Work</a>
         <a href="careers.html">Careers</a>
@@ -34,6 +35,7 @@
     </div>
     <nav class="nav-mobile" aria-label="Mobile navigation">
       <a href="index.html">Home</a>
+      <a href="about.html">About Us</a>
       <a href="services.html">Services</a>
       <a href="work.html">Our Work</a>
       <a href="careers.html">Careers</a>
@@ -234,68 +236,92 @@
       </div>
     </section>
 
-    <!-- SECTION 2: WHY GENZRIX -->
-    <section class="section-white" style="padding:96px 0; position:relative; overflow:hidden;">
-      <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(79,123,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(79,123,255,0.025) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;" aria-hidden="true"></div>
-      <div class="container">
-        <div class="section-header fade-up" style="text-align:center; max-width:640px; margin:0 auto 56px;">
-          <span class="section-label">Why GenZrix</span>
-          <h2>The execution layer your business needs.</h2>
-          <div class="section-sep" style="margin:16px auto 0;"></div>
-        </div>
-        <div class="why-grid">
-          <div class="why-card fade-up fade-up-delay-1">
-            <div class="why-icon icon-design">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <circle cx="12" cy="8" r="4"/>
-                <path d="M4 20v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/>
-              </svg>
+    <!-- ABOUT US -->
+    <section id="about-us" class="about-us-journey" aria-label="About Us">
+
+    <!-- WHY GENZRIX -->
+    <section class="about-why-section why-genzrix section-white" aria-label="Why GenZrix">
+      <div class="why-genzrix-scroll" data-why-stack-scroll>
+        <div class="why-genzrix-pin">
+          <div class="container why-genzrix-grid">
+            <div class="why-genzrix-col why-genzrix-col--logo">
+              <div class="why-genzrix-logo-ring" aria-hidden="true">
+                <svg class="why-genzrix-ring-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <path id="whyGenzrixRing" fill="none" d="M 100,100 m -64,0 a 64,64 0 1,1 128,0 a 64,64 0 1,1 -128,0"/>
+                  </defs>
+                  <g class="why-genzrix-ring-rotate">
+                    <text class="why-genzrix-ring-text">
+                      <textPath href="#whyGenzrixRing" startOffset="0">
+                        EXECUTE • EMPOWER • ELEVATE • EXECUTE • EMPOWER • ELEVATE •
+                      </textPath>
+                    </text>
+                  </g>
+                </svg>
+                <div class="why-genzrix-logo-mark" role="img" aria-label="GenZrix symbol"></div>
+              </div>
             </div>
-            <h4>One Accountable Partner</h4>
-            <p>Single contact. No chasing vendors. We own the brief, the team, and delivery end to end.</p>
-          </div>
-          <div class="why-card fade-up fade-up-delay-2">
-            <div class="why-icon icon-dev">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <rect x="2" y="3" width="20" height="14" rx="2"/>
-                <path d="M8 21h8"/><path d="M12 17v4"/>
-              </svg>
+            <div class="why-genzrix-col why-genzrix-col--copy">
+              <span class="section-label">About Us</span>
+              <h2 class="why-genzrix-headline">The execution layer<br>your business<br>needs.</h2>
             </div>
-            <h4>Eight Execution Capabilities</h4>
-            <p>Design, development, branding, marketing, content, photography, events, and operations.</p>
-          </div>
-          <div class="why-card fade-up fade-up-delay-3">
-            <div class="why-icon icon-marketing">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-              </svg>
+            <div class="why-genzrix-col why-genzrix-col--stack">
+              <div class="why-genzrix-stack" data-why-stack>
+                <article class="why-genzrix-stack-card is-active" data-why-card data-index="0">
+                  <div class="why-genzrix-stack-icon icon-design">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                      <circle cx="12" cy="8" r="4"/>
+                      <path d="M4 20v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/>
+                    </svg>
+                  </div>
+                  <h3>One Accountable Partner</h3>
+                  <p>Single contact. No chasing vendors. We own the brief, the team, and delivery end to end.</p>
+                </article>
+                <article class="why-genzrix-stack-card" data-why-card data-index="1">
+                  <div class="why-genzrix-stack-icon icon-dev">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                      <rect x="2" y="3" width="20" height="14" rx="2"/>
+                      <path d="M8 21h8"/><path d="M12 17v4"/>
+                    </svg>
+                  </div>
+                  <h3>Eight Execution Capabilities</h3>
+                  <p>Design, development, branding, marketing, content, photography, events, and operations.</p>
+                </article>
+                <article class="why-genzrix-stack-card" data-why-card data-index="2">
+                  <div class="why-genzrix-stack-icon icon-marketing">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                  </div>
+                  <h3>Gen Z Workforce Advantage</h3>
+                  <p>Vetted talent from top institutions. Hungry, current, and accountable to real outcomes.</p>
+                </article>
+                <article class="why-genzrix-stack-card" data-why-card data-index="3">
+                  <div class="why-genzrix-stack-icon icon-events">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                      <circle cx="12" cy="12" r="10"/>
+                      <path d="M12 6v6l4 2"/>
+                    </svg>
+                  </div>
+                  <h3>Fast Parallel Execution</h3>
+                  <p>Multiple workstreams run under one unified brief. Faster delivery, no quality trade-offs.</p>
+                </article>
+              </div>
             </div>
-            <h4>Gen Z Workforce Advantage</h4>
-            <p>Vetted talent from top institutions. Hungry, current, and accountable to real outcomes.</p>
-          </div>
-          <div class="why-card fade-up fade-up-delay-4">
-            <div class="why-icon icon-events">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M12 6v6l4 2"/>
-              </svg>
-            </div>
-            <h4>Fast Parallel Execution</h4>
-            <p>Multiple workstreams run under one unified brief. Faster delivery, no quality trade-offs.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- SECTION 3: THE PROBLEM -->
-    <section class="section-off">
+    <!-- WHY GENZRIX EXISTS -->
+    <section class="about-problem-section section-white">
       <div class="container">
-        <div class="section-header fade-up">
-          <span class="section-label">Why GenZrix Exists</span>
+        <div class="section-header about-section-header fade-up">
+          <span class="section-label about-label-warm">Why GenZrix Exists</span>
           <h2>The market is broken for growing businesses.</h2>
           <div class="section-sep"></div>
         </div>
-        <div class="cards-4">
+        <div class="cards-4 about-problem-grid">
           <div class="card fade-up fade-up-delay-1">
             <svg class="card-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
               <rect x="6" y="12" width="28" height="18" rx="2"/>
@@ -333,7 +359,12 @@
             <p>Clients carry the coordination burden themselves, losing time and money in the process.</p>
           </div>
         </div>
+        <p class="about-us-nav fade-up">
+          <a href="/about" class="about-us-link">Explore About Us →</a>
+        </p>
       </div>
+    </section>
+
     </section>
 
     <!-- SECTION 4: HOW GENZRIX WORKS -->
@@ -617,6 +648,7 @@
         <div>
           <h5>Navigate</h5>
           <nav class="footer-links">
+            <a href="about.html">About Us</a>
             <a href="services.html">Services</a>
             <a href="work.html">Our Work</a>
             <a href="careers.html">Careers</a>

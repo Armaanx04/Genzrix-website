@@ -46,7 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ── ACTIVE NAV LINK ── */
-  const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+  const pathSegment = window.location.pathname.split('/').pop() || '';
+  const currentPath = pathSegment === '' || pathSegment === 'about'
+    ? (pathSegment === 'about' ? 'about.html' : 'index.html')
+    : pathSegment;
   document.querySelectorAll('.nav-links a, .nav-mobile a').forEach(link => {
     const href = link.getAttribute('href');
     if (href === currentPath || (currentPath === '' && href === 'index.html')) {
@@ -504,6 +507,196 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   mountServicesShowcase();
+
+  /* ── WHY GENZRIX STACK (scroll-driven) ── */
+  function initWhyGenzrixStack() {
+    const scrollRoot = document.querySelector('[data-why-stack-scroll]');
+    if (!scrollRoot) return;
+
+    const pinEl = scrollRoot.querySelector('.why-genzrix-pin');
+    const stackEl = scrollRoot.querySelector('[data-why-stack]');
+    const cards = [...scrollRoot.querySelectorAll('[data-why-card]')];
+    if (!pinEl || !stackEl || cards.length < 2) return;
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const STEP_VH = reducedMotion ? 2.25 : 4.5;
+    const HOLD_VH = reducedMotion ? 0.5 : 1;
+    const SUMMARY_VH = reducedMotion ? 0.5 : 1;
+    const ROW_HEIGHT = 122;
+    const ROW_GAP = 18;
+    const INACTIVE_SCALE_Y = 1 / 1.2;
+    let scrollTicking = false;
+    let stackBaseHeight = 0;
+
+    const easeOutCubic = (t) => 1 - (1 - t) ** 3;
+    const easeInOutCubic = (t) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
+    const lerp = (a, b, t) => a + (b - a) * t;
+
+    const getStepHeight = () => window.innerHeight * STEP_VH;
+    const getHoldHeight = () => window.innerHeight * HOLD_VH;
+    const getSummaryHeight = () => window.innerHeight * SUMMARY_VH;
+    const getRootTop = () => scrollRoot.getBoundingClientRect().top + window.scrollY;
+    const getCardHeight = () => cards[0]?.offsetHeight || stackEl.offsetHeight;
+    const getPeekPx = () => Math.max(48, getCardHeight() * 0.22);
+    const getStackBaseHeight = () => {
+      const parsed = parseFloat(getComputedStyle(stackEl).height);
+      return Number.isFinite(parsed) && parsed > 0 ? parsed : stackEl.offsetHeight;
+    };
+    const getSummaryListHeight = () => cards.length * ROW_HEIGHT + (cards.length - 1) * ROW_GAP;
+
+    const getCardPhaseEnd = () => (cards.length - 1) * getStepHeight();
+    const getHoldEnd = () => getCardPhaseEnd() + getHoldHeight();
+    const getScrollDistance = () => getHoldEnd() + getSummaryHeight();
+
+    const getFrontFromScroll = (scrolled) => {
+      const stepHeight = getStepHeight();
+      const maxFront = cards.length - 1;
+
+      if (scrolled <= 0 || stepHeight <= 0) return 0;
+      return Math.min(maxFront, scrolled / stepHeight);
+    };
+
+    const getStackState = (front, i) => {
+      const cardHeight = getCardHeight();
+      const peek = getPeekPx();
+      const behindStep = cardHeight - peek;
+      const rel = front - i;
+      let translateY = 0;
+      let scaleX = 1;
+      let scaleY = 1;
+      let opacity = 1;
+      let zIndex = 10;
+      const inactiveScaleX = 0.96;
+
+      if (rel >= 0) {
+        translateY = rel * behindStep * 0.12 + rel * peek;
+        scaleX = Math.max(inactiveScaleX, 1 - rel * 0.022);
+        scaleY = Math.max(INACTIVE_SCALE_Y, 1 - rel * 0.1);
+        opacity = Math.max(0.42, 1 - rel * 0.2);
+        zIndex = 100 - Math.round(rel * 14);
+      } else if (rel > -1) {
+        const rise = 1 + rel;
+        translateY = (1 - rise) * behindStep;
+        scaleX = lerp(inactiveScaleX, 1, rise);
+        scaleY = lerp(INACTIVE_SCALE_Y, 1, rise);
+        opacity = 0.28 + rise * 0.72;
+        zIndex = 70 + Math.round(rise * 50);
+      } else {
+        const depth = -rel - 1;
+        translateY = behindStep + depth * (peek * 0.35);
+        scaleX = inactiveScaleX;
+        scaleY = INACTIVE_SCALE_Y;
+        opacity = Math.max(0, 0.28 - depth * 0.28);
+        zIndex = Math.max(1, 18 - Math.round(depth * 4));
+      }
+
+      return {
+        translateY,
+        scaleX,
+        scaleY,
+        opacity,
+        zIndex,
+        isActive: rel >= -0.05 && rel < 0.35,
+      };
+    };
+
+    const applyCardVisual = (card, state) => {
+      const activeBoost = state.isActive ? 1.02 : 1;
+      const scaleX = state.scaleX * activeBoost;
+      const scaleY = state.scaleY * activeBoost;
+      card.style.transform = `translate3d(0, ${state.translateY.toFixed(1)}px, 0) scale(${scaleX.toFixed(3)}, ${scaleY.toFixed(3)})`;
+      card.style.opacity = state.opacity.toFixed(3);
+      card.style.zIndex = String(state.zIndex);
+      card.classList.toggle('is-active', state.isActive);
+    };
+
+    const applyStack = (front) => {
+      stackEl.classList.remove('is-summary');
+      stackEl.classList.add('is-stacking');
+      stackEl.style.height = `${stackBaseHeight}px`;
+      cards.forEach((card) => card.classList.remove('is-compact'));
+
+      cards.forEach((card, i) => {
+        const desc = card.querySelector('p');
+        if (desc) desc.style.opacity = '';
+        applyCardVisual(card, getStackState(front, i));
+      });
+    };
+
+    const applySummary = (rawProgress) => {
+      stackEl.classList.remove('is-stacking');
+      const t = Math.max(0, Math.min(1, rawProgress));
+      const descFade = easeOutCubic(Math.min(1, t / 0.4));
+      const morph = easeInOutCubic(Math.max(0, (t - 0.18) / 0.82));
+      const front = cards.length - 1;
+      const listHeight = getSummaryListHeight();
+
+      stackEl.classList.toggle('is-summary', morph > 0.97);
+      stackEl.style.height = `${lerp(stackBaseHeight, listHeight, morph).toFixed(1)}px`;
+
+      cards.forEach((card, i) => {
+        const stagger = i * 0.045;
+        const cardMorph = easeInOutCubic(Math.max(0, Math.min(1, (morph - stagger) / Math.max(0.001, 1 - stagger))));
+        const from = getStackState(front, i);
+        const targetY = i * (ROW_HEIGHT + ROW_GAP);
+        const translateY = lerp(from.translateY, targetY, cardMorph);
+        const scaleX = lerp(from.scaleX, 1, cardMorph);
+        const scaleY = lerp(from.scaleY, 1, cardMorph);
+        const opacity = lerp(from.opacity, 1, cardMorph);
+        const zIndex = 10 + i;
+
+        card.style.transform = `translate3d(0, ${translateY.toFixed(1)}px, 0) scale(${scaleX.toFixed(3)}, ${scaleY.toFixed(3)})`;
+        card.style.opacity = opacity.toFixed(3);
+        card.style.zIndex = String(zIndex);
+        card.classList.toggle('is-active', false);
+        card.classList.toggle('is-compact', cardMorph > 0.62);
+
+        const desc = card.querySelector('p');
+        if (desc) desc.style.opacity = (1 - descFade).toFixed(3);
+      });
+    };
+
+    const updateScrollHeight = () => {
+      stackBaseHeight = getStackBaseHeight();
+      const pinHeight = pinEl.offsetHeight;
+      scrollRoot.style.height = `${pinHeight + getScrollDistance()}px`;
+    };
+
+    const onScroll = () => {
+      if (scrollTicking) return;
+      scrollTicking = true;
+      requestAnimationFrame(() => {
+        const scrolled = Math.max(0, window.scrollY - getRootTop());
+        const cardPhaseEnd = getCardPhaseEnd();
+        const holdEnd = getHoldEnd();
+
+        if (scrolled <= cardPhaseEnd) {
+          applyStack(getFrontFromScroll(scrolled));
+        } else if (scrolled <= holdEnd) {
+          applyStack(cards.length - 1);
+        } else {
+          const summaryProgress = (scrolled - holdEnd) / getSummaryHeight();
+          applySummary(summaryProgress);
+        }
+
+        scrollTicking = false;
+      });
+    };
+
+    updateScrollHeight();
+    requestAnimationFrame(() => {
+      updateScrollHeight();
+      applyStack(0);
+      onScroll();
+    });
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', () => {
+      updateScrollHeight();
+      onScroll();
+    }, { passive: true });
+  }
+
+  initWhyGenzrixStack();
 
   /* ── PORTFOLIO FILTER ── */
   const filterBtns = document.querySelectorAll('.filter-btn');
