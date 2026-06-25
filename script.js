@@ -13,6 +13,7 @@ if (SUPABASE_URL && SUPABASE_ANON_KEY) {
   supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
+
 /* ── Category SVG icons for portfolio cards ── */
 const categoryIcons = {
   design: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="#4F7BFF" stroke-width="1.5"><rect x="6" y="8" width="36" height="28" rx="2"/><circle cx="16" cy="20" r="5"/><path d="M6 28 l10-8 8 7 6-5 12 10"/></svg>`,
@@ -508,6 +509,90 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   mountServicesShowcase();
+
+  
+/* ── footer dots canvas ── */
+ (function () {
+  const canvas = document.getElementById('dotCanvas');
+  const ctx    = canvas.getContext('2d');
+ 
+  // Dot visual parameters — tuned to match the reference screenshot
+  const SPACING   = 5;     // tight grid, ~14 px between centres
+  const RADIUS    = 1.0;    // slightly larger, more visible dots
+  const BASE_DARK = 0.04;   // minimum opacity everywhere
+ 
+  let dots = [];
+  let W, H;
+ 
+  function buildDots() {
+    W = canvas.width;
+    H = canvas.height;
+ 
+    const cols = Math.ceil(W / SPACING) + 1;
+    const rows = Math.ceil(H / SPACING) + 1;
+ 
+    dots = [];
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const x = c * SPACING;
+        const y = r * SPACING;
+ 
+        // Gradient brightness: brighter toward the bottom (matching the reference)
+        // Using a radial-ish falloff centred bottom-left
+        const normY  = y / H;                     // 0 = top, 1 = bottom
+        const normX  = x / W;                     // 0 = left, 1 = right
+        // Bottom rows glow more; left side slightly brighter than right
+        const zoneBrightness = Math.pow(normY, 1.2) * (1 - normX * 0.4);
+ 
+        dots.push({
+          x, y,
+          period : 800 + Math.random() * 4000,
+          phase  : Math.random() * Math.PI * 2,
+          // Each dot oscillates between its own min/max shaped by zone
+          minA   : BASE_DARK + zoneBrightness * 0.05,
+          maxA   : 0 + zoneBrightness * 1.0
+        });
+      }
+    }
+  }
+ 
+  function resize() {
+    const rect   = canvas.parentElement.getBoundingClientRect();
+    canvas.width  = rect.width;
+    canvas.height = rect.height;
+    buildDots();
+  }
+ 
+  function draw(ts) {
+    ctx.clearRect(0, 0, W, H);
+ 
+    for (const d of dots) {
+      const t     = (ts % d.period) / d.period;
+      const sine  = Math.sin(t * Math.PI * 2 + d.phase);
+      const alpha = d.minA + (sine * 0.5 + 0.5) * (d.maxA - d.minA);
+ 
+      ctx.beginPath();
+      // Rounded-square dots: use fillRect with slight rounding via arc
+      // The reference dots look like small rounded squares, not perfect circles
+      const s = RADIUS * 1.6;  // half-size of square
+      ctx.roundRect(d.x - s, d.y - s, s * 2, s * 2, 0.6);
+      // Interpolate from dark red (139,0,0) to white (255,255,255) based on brightness
+      const r = Math.round(139 + (255 - 139) * alpha);
+      const g = Math.round(0   + (255 - 0)   * alpha);
+      const b = Math.round(0   + (255 - 0)   * alpha);
+      ctx.fillStyle = `rgba(${r},${g},${b},${alpha.toFixed(3)})`;
+      ctx.fill();
+    }
+ 
+    requestAnimationFrame(draw);
+  }
+ 
+  resize();
+  new ResizeObserver(resize).observe(canvas.parentElement);
+  requestAnimationFrame(draw);
+})();
+
+
 
   /* ── PORTFOLIO FILTER ── */
   const filterBtns = document.querySelectorAll('.filter-btn');
