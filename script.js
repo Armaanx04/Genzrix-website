@@ -75,6 +75,207 @@ document.addEventListener('DOMContentLoaded', () => {
 
   observeFadeUps();
 
+  /* ── HOW IT WORKS: premium pipeline sequence ── */
+  const processSection = document.querySelector('.ds-section--process');
+  if (processSection) {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const pipelinePath = processSection.querySelector('#howPipelinePath');
+    const pipelineIndicator = processSection.querySelector('.how-process-pipeline__indicator');
+    const pipelineLine = processSection.querySelector('.how-process-pipeline__line');
+    const pipelineShine = processSection.querySelector('.how-process-pipeline__shine');
+    const processSteps = [...processSection.querySelectorAll('.how-step[data-how-step]')];
+    let sequenceStarted = false;
+
+    const easeOutExpo = (t) => (t >= 1 ? 1 : 1 - (2 ** (-10 * t)));
+    const easeOutQuart = (t) => 1 - ((1 - t) ** 4);
+    const linear = (t) => t;
+
+    const wait = (ms) => new Promise((resolve) => { setTimeout(resolve, ms); });
+
+    const drawLine = (duration) => new Promise((resolve) => {
+      if (!pipelineLine) {
+        resolve();
+        return;
+      }
+
+      const startAt = performance.now();
+      pipelineLine.style.strokeDasharray = '100';
+      pipelineLine.style.strokeDashoffset = '100';
+      if (pipelineShine) {
+        pipelineShine.style.strokeDasharray = '1.8 98.2';
+        pipelineShine.style.strokeDashoffset = '100';
+        pipelineShine.style.opacity = '1';
+      }
+
+      const tick = (now) => {
+        const progress = Math.min((now - startAt) / duration, 1);
+        const eased = easeOutExpo(progress);
+        const offset = 100 * (1 - eased);
+        pipelineLine.style.strokeDashoffset = String(offset);
+        if (pipelineShine) pipelineShine.style.strokeDashoffset = String(offset);
+
+        if (progress < 1) {
+          requestAnimationFrame(tick);
+        } else {
+          processSection.classList.add('is-line-complete');
+          pipelineLine.style.strokeDasharray = 'none';
+          pipelineLine.style.strokeDashoffset = '0';
+          if (pipelineShine) pipelineShine.style.opacity = '0';
+          resolve();
+        }
+      };
+
+      requestAnimationFrame(tick);
+    });
+
+    const showCircle = (index) => {
+      if (processSteps[index]) processSteps[index].classList.add('is-circle-in');
+    };
+
+    const PIPE_C1 = 0.061;
+    const PIPE_C2 = 0.5;
+    const PIPE_C3 = 0.938;
+
+    const pulseCircle = (index) => new Promise((resolve) => {
+      const step = processSteps[index];
+      if (!step) {
+        resolve();
+        return;
+      }
+      step.classList.remove('is-circle-pulse');
+      void step.offsetWidth;
+      step.classList.add('is-circle-pulse');
+      setTimeout(() => {
+        step.classList.remove('is-circle-pulse');
+        resolve();
+      }, 250);
+    });
+
+    const revealTitle = async (index) => {
+      if (processSteps[index]) processSteps[index].classList.add('is-title-in');
+      await wait(420);
+    };
+
+    const revealDesc = async (index) => {
+      await wait(135);
+      if (processSteps[index]) processSteps[index].classList.add('is-desc-in');
+      await wait(420);
+    };
+
+    const animateChevron = (fromRatio, toRatio, duration, easing = linear) => new Promise((resolve) => {
+      if (!pipelinePath || !pipelineIndicator) {
+        resolve();
+        return;
+      }
+
+      const pathLength = pipelinePath.getTotalLength();
+      const startAt = performance.now();
+      const targetOpacity = 0.9;
+
+      const tick = (now) => {
+        const progress = Math.min((now - startAt) / duration, 1);
+        const eased = easing(progress);
+        const ratio = fromRatio + (toRatio - fromRatio) * eased;
+        const point = pipelinePath.getPointAtLength(pathLength * ratio);
+        pipelineIndicator.setAttribute('transform', `translate(${point.x}, ${point.y})`);
+
+        if (progress < 0.08) {
+          pipelineIndicator.setAttribute('opacity', String((progress / 0.08) * targetOpacity));
+        } else if (progress > 0.92 && toRatio >= PIPE_C3 - 0.02) {
+          pipelineIndicator.setAttribute('opacity', String(((1 - progress) / 0.08) * targetOpacity));
+        } else {
+          pipelineIndicator.setAttribute('opacity', String(targetOpacity));
+        }
+
+        if (progress < 1) {
+          requestAnimationFrame(tick);
+        } else {
+          if (toRatio < PIPE_C3 - 0.02) pipelineIndicator.setAttribute('opacity', String(targetOpacity));
+          resolve();
+        }
+      };
+
+      requestAnimationFrame(tick);
+    });
+
+    const fadeChevronOut = (duration) => new Promise((resolve) => {
+      if (!pipelineIndicator) {
+        resolve();
+        return;
+      }
+
+      const startOpacity = parseFloat(pipelineIndicator.getAttribute('opacity') || '0.9');
+      const startAt = performance.now();
+
+      const tick = (now) => {
+        const progress = Math.min((now - startAt) / duration, 1);
+        const eased = easeOutQuart(progress);
+        pipelineIndicator.setAttribute('opacity', String(startOpacity * (1 - eased)));
+        if (progress < 1) requestAnimationFrame(tick);
+        else {
+          pipelineIndicator.setAttribute('opacity', '0');
+          resolve();
+        }
+      };
+
+      requestAnimationFrame(tick);
+    });
+
+    const showAllSteps = () => {
+      processSection.classList.add('is-line-complete');
+      processSteps.forEach((step) => {
+        step.classList.add('is-circle-in', 'is-title-in', 'is-desc-in');
+      });
+    };
+
+    const runPipelineSequence = async () => {
+      if (sequenceStarted) return;
+      sequenceStarted = true;
+
+      processSection.classList.add('is-revealed');
+
+      if (reducedMotion) {
+        showAllSteps();
+        return;
+      }
+
+      await drawLine(900);
+
+      showCircle(0);
+      await pulseCircle(0);
+      await revealTitle(0);
+      await revealDesc(0);
+
+      await animateChevron(PIPE_C1, PIPE_C2, 520, linear);
+      showCircle(1);
+      await pulseCircle(1);
+      await revealTitle(1);
+      await revealDesc(1);
+
+      await animateChevron(PIPE_C2, PIPE_C3, 520, linear);
+      showCircle(2);
+      await pulseCircle(2);
+      await revealTitle(2);
+      await revealDesc(2);
+
+      await fadeChevronOut(280);
+    };
+
+    if (reducedMotion) {
+      runPipelineSequence();
+    } else {
+      const processObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            runPipelineSequence();
+            processObserver.unobserve(processSection);
+          }
+        });
+      }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
+      processObserver.observe(processSection);
+    }
+  }
+
   /* ── SITE BACKGROUND ── */
   const siteBgEl = document.querySelector('[data-site-background]');
   if (siteBgEl) initSiteBackground(siteBgEl);
