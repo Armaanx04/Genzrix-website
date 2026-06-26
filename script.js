@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
       pipelineLine.style.strokeDasharray = '100';
       pipelineLine.style.strokeDashoffset = '100';
       if (pipelineShine) {
-        pipelineShine.style.strokeDasharray = '1.8 98.2';
+        pipelineShine.style.strokeDasharray = '2.5 97.5';
         pipelineShine.style.strokeDashoffset = '100';
         pipelineShine.style.opacity = '1';
       }
@@ -132,10 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (processSteps[index]) processSteps[index].classList.add('is-circle-in');
     };
 
-    const PIPE_C1 = 0.061;
-    const PIPE_C2 = 0.5;
-    const PIPE_C3 = 0.938;
-
     const pulseCircle = (index) => new Promise((resolve) => {
       const step = processSteps[index];
       if (!step) {
@@ -148,18 +144,17 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         step.classList.remove('is-circle-pulse');
         resolve();
-      }, 250);
+      }, 300);
     });
 
     const revealTitle = async (index) => {
       if (processSteps[index]) processSteps[index].classList.add('is-title-in');
-      await wait(420);
+      await wait(460);
     };
 
     const revealDesc = async (index) => {
-      await wait(135);
       if (processSteps[index]) processSteps[index].classList.add('is-desc-in');
-      await wait(420);
+      await wait(400);
     };
 
     const animateChevron = (fromRatio, toRatio, duration, easing = linear) => new Promise((resolve) => {
@@ -181,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (progress < 0.08) {
           pipelineIndicator.setAttribute('opacity', String((progress / 0.08) * targetOpacity));
-        } else if (progress > 0.92 && toRatio >= PIPE_C3 - 0.02) {
+        } else if (progress > 0.92 && toRatio >= 0.98) {
           pipelineIndicator.setAttribute('opacity', String(((1 - progress) / 0.08) * targetOpacity));
         } else {
           pipelineIndicator.setAttribute('opacity', String(targetOpacity));
@@ -190,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (progress < 1) {
           requestAnimationFrame(tick);
         } else {
-          if (toRatio < PIPE_C3 - 0.02) pipelineIndicator.setAttribute('opacity', String(targetOpacity));
+          if (toRatio < 0.98) pipelineIndicator.setAttribute('opacity', String(targetOpacity));
           resolve();
         }
       };
@@ -246,13 +241,13 @@ document.addEventListener('DOMContentLoaded', () => {
       await revealTitle(0);
       await revealDesc(0);
 
-      await animateChevron(PIPE_C1, PIPE_C2, 520, linear);
+      await animateChevron(0.02, 0.5, 540, linear);
       showCircle(1);
       await pulseCircle(1);
       await revealTitle(1);
       await revealDesc(1);
 
-      await animateChevron(PIPE_C2, PIPE_C3, 520, linear);
+      await animateChevron(0.5, 0.98, 540, linear);
       showCircle(2);
       await pulseCircle(2);
       await revealTitle(2);
@@ -587,7 +582,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabs = [...serviceShowcase.querySelectorAll('[role="tab"]')];
     const panels = [...serviceShowcase.querySelectorAll('[role="tabpanel"]')];
     const card = serviceShowcase.querySelector('.services-showcase-card');
-    const counterEl = serviceShowcase.querySelector('[data-service-counter]');
     const indexEl = serviceShowcase.querySelector('[data-service-index]');
     const panelsWrap = serviceShowcase.querySelector('.services-showcase-panels');
     let currentIndex = 0;
@@ -646,35 +640,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
 
-    const restartPanelVisuals = (panel) => {
-      if (reducedMotion || !panel) return;
-      const animated = panel.querySelectorAll(
-        '.sv-chart-line, .sv-glow-path, .sv-roadmap-fill, .sv-timeline-progress'
-      );
-      animated.forEach((el) => {
-        el.style.animation = 'none';
-        void el.offsetWidth;
-        el.style.animation = '';
-      });
-    };
+    const restartPanelVisuals = () => {};
 
     const updateVisualParallax = (index) => {
-      if (reducedMotion) return;
       const panel = panels[index];
       if (!panel) return;
       const visual = panel.querySelector('.services-showcase-visual');
       if (!visual) return;
-
-      const rootTop = getRootTop();
-      const stepHeight = getStepHeight();
-      const scrolled = Math.max(0, window.scrollY - rootTop);
-      const stepProgress = stepHeight > 0 ? (scrolled - index * stepHeight) / stepHeight : 0;
-      const eased = Math.max(-1, Math.min(1, (stepProgress - 0.5) * 2));
-      const offsetY = eased * 10;
-      const offsetX = eased * 4;
-
-      visual.style.setProperty('--sv-parallax-y', `${offsetY.toFixed(2)}px`);
-      visual.style.setProperty('--sv-parallax-x', `${offsetX.toFixed(2)}px`);
+      visual.style.setProperty('--sv-parallax-y', '0px');
+      visual.style.setProperty('--sv-parallax-x', '0px');
     };
 
     const switchService = (index) => {
@@ -686,7 +660,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       activateTab(index);
       if (card && accent) card.dataset.accent = accent;
-      if (counterEl) counterEl.textContent = `${index + 1} / ${panels.length}`;
       if (indexEl) indexEl.textContent = String(index + 1);
 
       panels.forEach((panel, i) => {
