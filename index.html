@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
+  <div class="site-bg" data-site-background aria-hidden="true"></div>
 
   <!-- NAV -->
   <header class="nav" role="banner">
@@ -46,187 +47,118 @@
   <main>
 
     <!-- SECTION 1: HERO -->
-    <section class="hero">
-      <div class="hero-glow-1" aria-hidden="true"></div>
-      <div class="hero-glow-2" aria-hidden="true"></div>
-      <div class="hero-glow-3" aria-hidden="true"></div>
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="hero-bg" aria-hidden="true">
+        <div class="hero-shapegrid" data-hero-shapegrid></div>
+        <div class="hero-bg-glow hero-bg-glow--headline"></div>
+        <div class="hero-bg-glow hero-bg-glow--diagram"></div>
+        <div class="hero-bg-glow hero-bg-glow--vignette"></div>
+      </div>
 
       <div class="hero-split">
-        <!-- LEFT: Content -->
         <div class="hero-left">
-          <div class="hero-badge">
-            <span class="hero-badge-dot"></span>
-            EXECUTION INFRASTRUCTURE FOR MODERN BUSINESSES
-          </div>
-          <h1>
+          <p class="hero-badge">
+            <span class="hero-badge-dot" aria-hidden="true"></span>
+            Execution Infrastructure
+          </p>
+          <h1 id="hero-heading">
             <span class="hero-word">One</span>
             <span class="hero-word"> Team.</span>
             <br />
             <span class="hero-word">Every</span>
-            <span class="hero-word"> <span class="red-text">Execution.</span></span>
+            <span class="hero-word"> <span class="hero-accent">Execution.</span></span>
           </h1>
           <p class="hero-subtext">
-            One brief. One team. Every domain covered.
-            
-            Design, development, marketing, content, events, and operations — delivered end-to-end through one accountable execution partner.
+            One brief. One team. Every domain covered. Design, development, marketing, content, events, and operations — delivered end-to-end through one accountable execution partner.
           </p>
           <div class="hero-ctas">
-            <a href="contact.html" class="btn-red">Work With Us</a>
-            <a href="careers.html" class="btn-secondary">Join Our Team</a>
+            <a href="contact.html" class="btn-primary hero-btn-primary">Work With Us</a>
+            <a href="careers.html" class="btn-secondary hero-btn-secondary">Join Our Team</a>
           </div>
         </div>
 
-        <!-- RIGHT: Ecosystem in glass card -->
         <div class="hero-right">
-          <div class="ecosystem-card" style="background:none;border:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;">
-
-          </div>
-            <svg class="ecosystem-svg" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <figure class="hero-diagram" aria-label="GenZrix execution ecosystem diagram">
+            <svg class="hero-diagram-svg" viewBox="0 0 440 440" fill="none" xmlns="http://www.w3.org/2000/svg" role="img">
               <defs>
-                <linearGradient id="lg1" x1="220" y1="220" x2="220" y2="70" gradientUnits="userSpaceOnUse"><stop stop-color="rgba(79,123,255,0.04)"/><stop offset="1" stop-color="rgba(79,123,255,0.4)"/></linearGradient>
-                <linearGradient id="lg2" x1="220" y1="220" x2="350" y2="145" gradientUnits="userSpaceOnUse"><stop stop-color="rgba(14,165,233,0.04)"/><stop offset="1" stop-color="rgba(14,165,233,0.4)"/></linearGradient>
-                <linearGradient id="lg3" x1="220" y1="220" x2="350" y2="295" gradientUnits="userSpaceOnUse"><stop stop-color="rgba(249,115,22,0.04)"/><stop offset="1" stop-color="rgba(249,115,22,0.4)"/></linearGradient>
-                <linearGradient id="lg4" x1="220" y1="220" x2="220" y2="370" gradientUnits="userSpaceOnUse"><stop stop-color="rgba(139,92,246,0.04)"/><stop offset="1" stop-color="rgba(139,92,246,0.4)"/></linearGradient>
-                <linearGradient id="lg5" x1="220" y1="220" x2="90" y2="295" gradientUnits="userSpaceOnUse"><stop stop-color="rgba(245,158,11,0.04)"/><stop offset="1" stop-color="rgba(245,158,11,0.4)"/></linearGradient>
-                <linearGradient id="lg6" x1="220" y1="220" x2="90" y2="145" gradientUnits="userSpaceOnUse"><stop stop-color="rgba(16,185,129,0.04)"/><stop offset="1" stop-color="rgba(16,185,129,0.4)"/></linearGradient>
-                <radialGradient id="hubG" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(79,123,255,0.14)"/><stop offset="100%" stop-color="rgba(79,123,255,0)"/></radialGradient>
-                <path id="ap1" d="M220,220 L220,70"/><path id="ap2" d="M220,220 L350,145"/><path id="ap3" d="M220,220 L350,295"/>
-                <path id="ap4" d="M220,220 L220,370"/><path id="ap5" d="M220,220 L90,295"/><path id="ap6" d="M220,220 L90,145"/>
+                <path id="hero-ap1" d="M220,220 L220,70"/>
+                <path id="hero-ap2" d="M220,220 L350,145"/>
+                <path id="hero-ap3" d="M220,220 L350,295"/>
+                <path id="hero-ap4" d="M220,220 L220,370"/>
+                <path id="hero-ap5" d="M220,220 L90,295"/>
+                <path id="hero-ap6" d="M220,220 L90,145"/>
               </defs>
 
-              <!-- Gradient dashed connector lines -->
-              <line x1="220" y1="220" x2="220" y2="90" stroke="url(#lg1)" stroke-width="1.5" stroke-dasharray="4 4"/>
-              <line x1="220" y1="220" x2="350" y2="145" stroke="url(#lg2)" stroke-width="1.5" stroke-dasharray="4 4"/>
-              <line x1="220" y1="220" x2="350" y2="295" stroke="url(#lg3)" stroke-width="1.5" stroke-dasharray="4 4"/>
-              <line x1="220" y1="220" x2="220" y2="370" stroke="url(#lg4)" stroke-width="1.5" stroke-dasharray="4 4"/>
-              <line x1="220" y1="220" x2="90" y2="295" stroke="url(#lg5)" stroke-width="1.5" stroke-dasharray="4 4"/>
-              <line x1="220" y1="220" x2="90" y2="145" stroke="url(#lg6)" stroke-width="1.5" stroke-dasharray="4 4"/>
-
-              <!-- Animated colour-coded flow dots -->
-              <circle r="3" fill="rgba(79,123,255,0.85)"><animateMotion dur="2.2s" repeatCount="indefinite" begin="0s"><mpath href="#ap1"/></animateMotion></circle>
-              <circle r="3" fill="rgba(14,165,233,0.85)"><animateMotion dur="2.2s" repeatCount="indefinite" begin="0.37s"><mpath href="#ap2"/></animateMotion></circle>
-              <circle r="3" fill="rgba(249,115,22,0.85)"><animateMotion dur="2.2s" repeatCount="indefinite" begin="0.74s"><mpath href="#ap3"/></animateMotion></circle>
-              <circle r="3" fill="rgba(139,92,246,0.85)"><animateMotion dur="2.2s" repeatCount="indefinite" begin="1.1s"><mpath href="#ap4"/></animateMotion></circle>
-              <circle r="3" fill="rgba(245,158,11,0.85)"><animateMotion dur="2.2s" repeatCount="indefinite" begin="1.48s"><mpath href="#ap5"/></animateMotion></circle>
-              <circle r="3" fill="rgba(16,185,129,0.85)"><animateMotion dur="2.2s" repeatCount="indefinite" begin="1.84s"><mpath href="#ap6"/></animateMotion></circle>
-
-              <!-- Centre Nameplate -->
-
-<g>
-
-    <!-- soft glass background -->
-    <rect
-        x="125"
-        y="176"
-        width="190"
-        height="88"
-        rx="22"
-        fill="rgba(255,255,255,0.82)"
-        stroke="rgba(11,31,75,0.08)"
-        stroke-width="1.2"
-        style="backdrop-filter:blur(16px);"
-    />
-
-    <!-- subtle glow -->
-    <rect
-        x="128"
-        y="179"
-        width="184"
-        height="82"
-        rx="20"
-        fill="rgba(255,255,255,0.10)"
-    />
-
-    <!-- GENZRIX -->
-    <text
-        x="220"
-        y="212"
-        text-anchor="middle"
-        font-family="Inter,sans-serif"
-        font-size="25"
-        font-weight="700"
-        fill="#0B1F4B">
-
-        GEN<tspan fill="#D62839">ZRIX</tspan>
-
-    </text>
-
-    <!-- subtitle -->
-    <text
-        x="220"
-        y="236"
-        text-anchor="middle"
-        font-family="Inter,sans-serif"
-        font-size="10"
-        letter-spacing="1"
-        fill="#6B7280">
-
-        EXECUTION INFRASTRUCTURE
-
-    </text>
-
-</g>
-
-              <!-- NODE: Design (top) — blue -->
-              <g>
-                <animateTransform attributeName="transform" type="translate" values="0,0;0,-5;0,0" dur="3.2s" repeatCount="indefinite" begin="0s" calcMode="spline" keySplines="0.45,0,0.55,1;0.45,0,0.55,1" keyTimes="0;0.5;1" additive="sum"/>
-                <rect x="174" y="48" width="92" height="34" rx="17" fill="rgba(79,123,255,0.1)" stroke="rgba(79,123,255,0.45)" stroke-width="1.5"/>
-                <circle cx="193" cy="65" r="11" fill="rgba(79,123,255,0.2)"/>
-                <path d="M189,65 l3,-4 l3,4 l-3,4 Z" fill="rgba(79,123,255,0.9)"/>
-                <line x1="196" y1="69" x2="196" y2="72" stroke="rgba(79,123,255,0.9)" stroke-width="1.5" stroke-linecap="round"/>
-                <text x="213" y="69" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#0B1F4B">Design</text>
+              <g class="hero-diagram-connectors" aria-hidden="true">
+                <line class="hero-line" data-node="design" x1="220" y1="220" x2="220" y2="90" stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="4 5"/>
+                <line class="hero-line" data-node="development" x1="220" y1="220" x2="350" y2="145" stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="4 5"/>
+                <line class="hero-line" data-node="marketing" x1="220" y1="220" x2="350" y2="295" stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="4 5"/>
+                <line class="hero-line" data-node="content" x1="220" y1="220" x2="220" y2="370" stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="4 5"/>
+                <line class="hero-line" data-node="events" x1="220" y1="220" x2="90" y2="295" stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="4 5"/>
+                <line class="hero-line" data-node="operations" x1="220" y1="220" x2="90" y2="145" stroke="rgba(255,255,255,0.14)" stroke-width="1.5" stroke-dasharray="4 5"/>
               </g>
 
-              <!-- NODE: Development (top-right) — sky -->
-              <g>
-                <animateTransform attributeName="transform" type="translate" values="0,0;0,-5;0,0" dur="3.4s" repeatCount="indefinite" begin="0.55s" calcMode="spline" keySplines="0.45,0,0.55,1;0.45,0,0.55,1" keyTimes="0;0.5;1" additive="sum"/>
-                <rect x="296" y="128" width="108" height="34" rx="17" fill="rgba(14,165,233,0.1)" stroke="rgba(14,165,233,0.45)" stroke-width="1.5"/>
-                <circle cx="315" cy="145" r="11" fill="rgba(14,165,233,0.2)"/>
-                <path d="M311,141 l-4,4 l4,4" fill="none" stroke="rgba(14,165,233,0.9)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M319,141 l4,4 l-4,4" fill="none" stroke="rgba(14,165,233,0.9)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                <text x="332" y="149" font-family="Inter,sans-serif" font-size="10.5" font-weight="600" fill="#0B1F4B">Development</text>
+              <g class="hero-flow-dots" aria-hidden="true">
+                <circle r="2.5"><animateMotion dur="3s" repeatCount="indefinite" begin="0s"><mpath href="#hero-ap1"/></animateMotion></circle>
+                <circle r="2.5"><animateMotion dur="3s" repeatCount="indefinite" begin="0.5s"><mpath href="#hero-ap2"/></animateMotion></circle>
+                <circle r="2.5"><animateMotion dur="3s" repeatCount="indefinite" begin="1s"><mpath href="#hero-ap3"/></animateMotion></circle>
+                <circle r="2.5"><animateMotion dur="3s" repeatCount="indefinite" begin="1.5s"><mpath href="#hero-ap4"/></animateMotion></circle>
+                <circle r="2.5"><animateMotion dur="3s" repeatCount="indefinite" begin="2s"><mpath href="#hero-ap5"/></animateMotion></circle>
+                <circle r="2.5"><animateMotion dur="3s" repeatCount="indefinite" begin="2.5s"><mpath href="#hero-ap6"/></animateMotion></circle>
               </g>
 
-              <!-- NODE: Marketing (bottom-right) — orange -->
-              <g>
-                <animateTransform attributeName="transform" type="translate" values="0,0;0,-5;0,0" dur="3.6s" repeatCount="indefinite" begin="1.1s" calcMode="spline" keySplines="0.45,0,0.55,1;0.45,0,0.55,1" keyTimes="0;0.5;1" additive="sum"/>
-                <rect x="297" y="278" width="106" height="34" rx="17" fill="rgba(249,115,22,0.1)" stroke="rgba(249,115,22,0.45)" stroke-width="1.5"/>
-                <circle cx="316" cy="295" r="11" fill="rgba(249,115,22,0.2)"/>
-                <path d="M309,291 l-1,8 l6,-4 l7,5 l0,-9 Z" fill="rgba(249,115,22,0.9)"/>
-                <text x="333" y="299" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#0B1F4B">Marketing</text>
+              <g class="hero-hub" aria-hidden="true">
+                <rect class="hero-hub-surface" x="132" y="188" width="176" height="64" rx="12" fill="#181624" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+                <text x="220" y="216" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="22" font-weight="700" fill="#FFFFFF">GEN<tspan fill="#C8102E">ZRIX</tspan></text>
+                <text x="220" y="236" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" letter-spacing="2.2" fill="rgba(255,255,255,0.48)">EXECUTION HUB</text>
               </g>
 
-              <!-- NODE: Content (bottom) — violet -->
-              <g>
-                <animateTransform attributeName="transform" type="translate" values="0,0;0,-5;0,0" dur="3.3s" repeatCount="indefinite" begin="1.65s" calcMode="spline" keySplines="0.45,0,0.55,1;0.45,0,0.55,1" keyTimes="0;0.5;1" additive="sum"/>
-                <rect x="174" y="353" width="92" height="34" rx="17" fill="rgba(139,92,246,0.1)" stroke="rgba(139,92,246,0.45)" stroke-width="1.5"/>
-                <circle cx="193" cy="370" r="11" fill="rgba(139,92,246,0.2)"/>
-                <rect x="186" y="364" width="14" height="10" rx="2" fill="none" stroke="rgba(139,92,246,0.9)" stroke-width="1.5"/>
-                <circle cx="193" cy="369" r="2.5" fill="rgba(139,92,246,0.9)"/>
-                <path d="M189,364 l-2,-3 l6,0 Z" fill="rgba(139,92,246,0.9)"/>
-                <text x="213" y="374" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#0B1F4B">Content</text>
+              <g class="hero-node" data-node="design" tabindex="0" role="button" aria-label="Design capability">
+                <rect class="hero-node-bg" x="174" y="48" width="92" height="34" rx="17" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                <circle cx="193" cy="65" r="10" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+                <path d="M189,65 l3,-4 l3,4 l-3,4 Z" fill="rgba(255,255,255,0.72)"/>
+                <text x="213" y="69" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="rgba(255,255,255,0.88)">Design</text>
               </g>
 
-              <!-- NODE: Events (bottom-left) — amber -->
-              <g>
-                <animateTransform attributeName="transform" type="translate" values="0,0;0,-5;0,0" dur="3.5s" repeatCount="indefinite" begin="2.2s" calcMode="spline" keySplines="0.45,0,0.55,1;0.45,0,0.55,1" keyTimes="0;0.5;1" additive="sum"/>
-                <rect x="40" y="278" width="100" height="34" rx="17" fill="rgba(245,158,11,0.1)" stroke="rgba(245,158,11,0.45)" stroke-width="1.5"/>
-                <circle cx="59" cy="295" r="11" fill="rgba(245,158,11,0.2)"/>
-                <path d="M61,288 l-2.5,5 l-5,0 l4,3.5 l-1.5,5 l5,-3.5 l5,3.5 l-1.5,-5 l4,-3.5 l-5,0 Z" fill="rgba(245,158,11,0.9)"/>
-                <text x="76" y="299" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#0B1F4B">Events</text>
+              <g class="hero-node" data-node="development" tabindex="0" role="button" aria-label="Development capability">
+                <rect class="hero-node-bg" x="296" y="128" width="108" height="34" rx="17" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                <circle cx="315" cy="145" r="10" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+                <path d="M311,141 l-4,4 l4,4" fill="none" stroke="rgba(255,255,255,0.72)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M319,141 l4,4 l-4,4" fill="none" stroke="rgba(255,255,255,0.72)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <text x="332" y="149" font-family="Inter, sans-serif" font-size="10.5" font-weight="600" fill="rgba(255,255,255,0.88)">Development</text>
               </g>
 
-              <!-- NODE: Operations (top-left) — teal -->
-              <g>
-                <animateTransform attributeName="transform" type="translate" values="0,0;0,-5;0,0" dur="3.7s" repeatCount="indefinite" begin="2.75s" calcMode="spline" keySplines="0.45,0,0.55,1;0.45,0,0.55,1" keyTimes="0;0.5;1" additive="sum"/>
-                <rect x="34" y="128" width="112" height="34" rx="17" fill="rgba(16,185,129,0.1)" stroke="rgba(16,185,129,0.45)" stroke-width="1.5"/>
-                <circle cx="53" cy="145" r="11" fill="rgba(16,185,129,0.2)"/>
-                <circle cx="53" cy="145" r="4" fill="none" stroke="rgba(16,185,129,0.9)" stroke-width="1.5"/>
-                <circle cx="53" cy="145" r="7.5" fill="none" stroke="rgba(16,185,129,0.9)" stroke-width="1.5" stroke-dasharray="3 2"/>
-                <text x="70" y="149" font-family="Inter,sans-serif" font-size="10.5" font-weight="600" fill="#0B1F4B">Operations</text>
+              <g class="hero-node" data-node="marketing" tabindex="0" role="button" aria-label="Marketing capability">
+                <rect class="hero-node-bg" x="297" y="278" width="106" height="34" rx="17" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                <circle cx="316" cy="295" r="10" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+                <path d="M309,291 l-1,8 l6,-4 l7,5 l0,-9 Z" fill="rgba(255,255,255,0.72)"/>
+                <text x="333" y="299" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="rgba(255,255,255,0.88)">Marketing</text>
+              </g>
+
+              <g class="hero-node" data-node="content" tabindex="0" role="button" aria-label="Content capability">
+                <rect class="hero-node-bg" x="174" y="353" width="92" height="34" rx="17" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                <circle cx="193" cy="370" r="10" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+                <rect x="186" y="364" width="14" height="10" rx="2" fill="none" stroke="rgba(255,255,255,0.72)" stroke-width="1.2"/>
+                <text x="213" y="374" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="rgba(255,255,255,0.88)">Content</text>
+              </g>
+
+              <g class="hero-node" data-node="events" tabindex="0" role="button" aria-label="Events capability">
+                <rect class="hero-node-bg" x="40" y="278" width="100" height="34" rx="17" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                <circle cx="59" cy="295" r="10" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+                <path d="M61,288 l-2.5,5 l-5,0 l4,3.5 l-1.5,5 l5,-3.5 l5,3.5 l-1.5,-5 l4,-3.5 l-5,0 Z" fill="rgba(255,255,255,0.72)"/>
+                <text x="76" y="299" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="rgba(255,255,255,0.88)">Events</text>
+              </g>
+
+              <g class="hero-node" data-node="operations" tabindex="0" role="button" aria-label="Operations capability">
+                <rect class="hero-node-bg" x="34" y="128" width="112" height="34" rx="17" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                <circle cx="53" cy="145" r="10" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+                <circle cx="53" cy="145" r="4" fill="none" stroke="rgba(255,255,255,0.72)" stroke-width="1.2"/>
+                <circle cx="53" cy="145" r="7" fill="none" stroke="rgba(255,255,255,0.72)" stroke-width="1.2" stroke-dasharray="3 2"/>
+                <text x="70" y="149" font-family="Inter, sans-serif" font-size="10.5" font-weight="600" fill="rgba(255,255,255,0.88)">Operations</text>
               </g>
             </svg>
-          </div>
+            <figcaption class="hero-diagram-caption">Every capability. One execution hub.</figcaption>
+          </figure>
         </div>
       </div>
 
@@ -240,7 +172,8 @@
     <section id="about-us" class="about-us-journey" aria-label="About Us">
 
     <!-- WHY GENZRIX -->
-    <section class="about-why-section why-genzrix section-white" aria-label="Why GenZrix">
+    <section class="about-why-section why-genzrix ds-section ds-section--about" aria-label="Why GenZrix">
+      <div class="ds-section-ambient ds-section-ambient--about" aria-hidden="true"></div>
       <div class="why-genzrix-scroll" data-why-stack-scroll>
         <div class="why-genzrix-pin">
           <div class="container why-genzrix-grid">
@@ -258,7 +191,9 @@
                     </text>
                   </g>
                 </svg>
-                <div class="why-genzrix-logo-mark" role="img" aria-label="GenZrix symbol"></div>
+                <div class="why-genzrix-logo-medallion">
+                  <div class="why-genzrix-logo-mark" role="img" aria-label="GenZrix symbol"></div>
+                </div>
               </div>
             </div>
             <div class="why-genzrix-col why-genzrix-col--copy">
@@ -314,8 +249,9 @@
     </section>
 
     <!-- WHY GENZRIX EXISTS -->
-    <section class="about-problem-section section-white">
-      <div class="container">
+    <section class="about-problem-section ds-section ds-section--exists" aria-label="Why GenZrix Exists">
+      <div class="ds-section-ambient ds-section-ambient--exists" aria-hidden="true"></div>
+      <div class="container ds-section-inner">
         <div class="section-header about-section-header fade-up">
           <span class="section-label about-label-warm">Why GenZrix Exists</span>
           <h2>The market is broken for growing businesses.</h2>
@@ -329,8 +265,8 @@
               <span class="about-problem-bracket about-problem-bracket--bl"></span>
               <span class="about-problem-bracket about-problem-bracket--br"></span>
             </div>
-            <span class="about-problem-index" aria-hidden="true">01</span>
-            <svg class="about-problem-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <span class="about-problem-icon" aria-hidden="true">01</span>
+            <svg class="about-problem-index" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
               <rect x="6" y="12" width="28" height="18" rx="2"/>
               <path d="M14 12V9a6 6 0 0 1 12 0v3"/>
               <line x1="20" y1="20" x2="20" y2="24"/>
@@ -345,8 +281,8 @@
               <span class="about-problem-bracket about-problem-bracket--bl"></span>
               <span class="about-problem-bracket about-problem-bracket--br"></span>
             </div>
-            <span class="about-problem-index" aria-hidden="true">02</span>
-            <svg class="about-problem-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <span class="about-problem-icon" aria-hidden="true">02</span>
+            <svg class="about-problem-index" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
               <circle cx="12" cy="14" r="4"/><circle cx="28" cy="14" r="4"/><circle cx="20" cy="28" r="4"/>
               <line x1="16" y1="14" x2="24" y2="14"/>
               <line x1="14" y1="17" x2="19" y2="25"/>
@@ -362,8 +298,8 @@
               <span class="about-problem-bracket about-problem-bracket--bl"></span>
               <span class="about-problem-bracket about-problem-bracket--br"></span>
             </div>
-            <span class="about-problem-index" aria-hidden="true">03</span>
-            <svg class="about-problem-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <span class="about-problem-icon" aria-hidden="true">03</span>
+            <svg class="about-problem-index" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
               <path d="M8 28 L16 18 L22 23 L30 12"/>
               <circle cx="30" cy="12" r="2" fill="currentColor"/>
             </svg>
@@ -377,8 +313,8 @@
               <span class="about-problem-bracket about-problem-bracket--bl"></span>
               <span class="about-problem-bracket about-problem-bracket--br"></span>
             </div>
-            <span class="about-problem-index" aria-hidden="true">04</span>
-            <svg class="about-problem-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <span class="about-problem-icon" aria-hidden="true">04</span>
+            <svg class="about-problem-index" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
               <circle cx="20" cy="20" r="12"/>
               <path d="M20 14v6l4 4"/>
               <line x1="20" y1="8" x2="20" y2="6"/>
@@ -396,8 +332,9 @@
     </section>
 
     <!-- SECTION 4: HOW GENZRIX WORKS -->
-    <section class="section-white">
-      <div class="container">
+    <section class="ds-section ds-section--process" aria-label="How It Works">
+      <div class="ds-section-ambient ds-section-ambient--process" aria-hidden="true"></div>
+      <div class="container ds-section-inner">
         <div class="section-header fade-up">
           <span class="section-label">How It Works</span>
           <h2>One brief. One team. One delivery.</h2>
@@ -431,13 +368,15 @@
     </section>
 
     <!-- SECTION 5: SERVICES SHOWCASE -->
-    <section class="section-off services-showcase-section" id="services-showcase">
+    <section class="services-showcase-section ds-section ds-section--services" id="services-showcase">
+      <div class="ds-section-ambient ds-section-ambient--services" aria-hidden="true"></div>
       <div data-services-showcase-mount aria-busy="true"></div>
     </section>
 
     <!-- SECTION 6: THE MODEL -->
-    <section class="section-white">
-      <div class="container">
+    <section class="ds-section ds-section--model" aria-label="The GenZrix Model">
+      <div class="ds-section-ambient ds-section-ambient--model" aria-hidden="true"></div>
+      <div class="container ds-section-inner">
         <div class="model-grid">
           <div class="fade-up">
             <span class="section-label">The GenZrix Model</span>
@@ -481,8 +420,9 @@
     </section>
 
     <!-- SECTION 7: WHO WE WORK WITH -->
-    <section class="section-off">
-      <div class="container">
+    <section class="ds-section ds-section--clients" aria-label="Our Clients">
+      <div class="ds-section-ambient ds-section-ambient--clients" aria-hidden="true"></div>
+      <div class="container ds-section-inner">
         <div class="section-header fade-up">
           <span class="section-label">Our Clients</span>
           <h2>Built for businesses that are growing.</h2>
@@ -530,8 +470,9 @@
     </section>
 
     <!-- SECTION 8: TESTIMONIALS PLACEHOLDER -->
-    <section class="section-white">
-      <div class="container">
+    <section class="ds-section ds-section--soft" aria-label="Client Testimonials">
+      <div class="ds-section-ambient ds-section-ambient--soft" aria-hidden="true"></div>
+      <div class="container ds-section-inner">
         <div class="section-header fade-up">
           <span class="section-label">Client Testimonials</span>
           <h2>What our clients say</h2>
@@ -550,8 +491,9 @@
     </section>
 
     <!-- SECTION 9: SOCIAL PROOF -->
-    <section class="section-off">
-      <div class="container">
+    <section class="ds-section ds-section--soft" aria-label="Follow Our Work">
+      <div class="ds-section-ambient ds-section-ambient--soft" aria-hidden="true"></div>
+      <div class="container ds-section-inner">
         <div class="section-header fade-up">
           <span class="section-label">Follow Our Work</span>
           <h2>Connect with GenZrix</h2>
@@ -592,8 +534,9 @@
     </section>
 
     <!-- SECTION 10: FAQ -->
-    <section class="section-white">
-      <div class="container">
+    <section class="ds-section ds-section--soft" aria-label="FAQ">
+      <div class="ds-section-ambient ds-section-ambient--soft" aria-hidden="true"></div>
+      <div class="container ds-section-inner">
         <div class="section-header fade-up">
           <span class="section-label">FAQ</span>
           <h2>Frequently asked questions</h2>
@@ -654,8 +597,9 @@
     </section>
 
     <!-- SECTION 11: JOIN BANNER -->
-    <section class="join-banner">
-      <div class="container" style="position:relative; z-index:1;">
+    <section class="join-banner ds-section ds-section--cta" aria-label="For Gen Z Talent">
+      <div class="ds-section-ambient ds-section-ambient--cta" aria-hidden="true"></div>
+      <div class="container ds-section-inner">
         <span class="section-label fade-up" style="color:var(--red);">For Gen Z Talent</span>
         <h2 class="fade-up fade-up-delay-1">You have the skill. We have the stage.</h2>
         <p class="fade-up fade-up-delay-2">GenZrix recruits skilled students and young professionals and gives them real client work, real portfolios, and verified credentials. This is not an internship.</p>

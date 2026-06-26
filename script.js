@@ -3,6 +3,8 @@
    ============================================================ */
 
 import { createClient } from '@supabase/supabase-js';
+import { initSiteBackground } from './site-background.js';
+import { initHeroShapeGrid } from './hero-shapegrid.js';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -73,10 +75,77 @@ document.addEventListener('DOMContentLoaded', () => {
 
   observeFadeUps();
 
-  /* ── HERO WORD STAGGER ── */
-  document.querySelectorAll('.hero-word').forEach((word, i) => {
-    word.style.animationDelay = `${0.25 + i * 0.1}s`;
-  });
+  /* ── SITE BACKGROUND ── */
+  const siteBgEl = document.querySelector('[data-site-background]');
+  if (siteBgEl) initSiteBackground(siteBgEl);
+
+  /* ── HERO ── */
+  const heroShapeGridEl = document.querySelector('[data-hero-shapegrid]');
+  if (heroShapeGridEl) initHeroShapeGrid(heroShapeGridEl);
+
+  const heroSection = document.querySelector('.hero');
+  if (heroSection) {
+    document.querySelectorAll('.hero-word').forEach((word, i) => {
+      word.style.animationDelay = `${0.12 + i * 0.08}s`;
+    });
+
+    const diagram = heroSection.querySelector('.hero-diagram');
+    const nodes = heroSection.querySelectorAll('.hero-node');
+    const lines = heroSection.querySelectorAll('.hero-line');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (diagram && nodes.length && !reducedMotion) {
+      lines.forEach((line, index) => {
+        const length = line.getTotalLength?.() ?? 140;
+        line.style.strokeDasharray = `${length}`;
+        line.style.strokeDashoffset = `${length}`;
+        line.style.animation = `heroLineDraw 1s cubic-bezier(0.22, 1, 0.36, 1) ${0.35 + index * 0.08}s forwards`;
+      });
+
+      if (!document.getElementById('hero-line-draw-style')) {
+        const style = document.createElement('style');
+        style.id = 'hero-line-draw-style';
+        style.textContent = '@keyframes heroLineDraw { to { stroke-dashoffset: 0; } }';
+        document.head.appendChild(style);
+      }
+    }
+
+    const setActiveNode = (nodeId) => {
+      if (!diagram) return;
+      diagram.classList.add('is-interactive');
+      nodes.forEach(node => {
+        node.classList.toggle('is-active', node.dataset.node === nodeId);
+      });
+      lines.forEach(line => {
+        line.classList.toggle('is-active', line.dataset.node === nodeId);
+      });
+    };
+
+    const clearActiveNode = () => {
+      if (!diagram) return;
+      diagram.classList.remove('is-interactive');
+      nodes.forEach(node => node.classList.remove('is-active'));
+      lines.forEach(line => line.classList.remove('is-active'));
+    };
+
+    nodes.forEach(node => {
+      node.addEventListener('mouseenter', () => setActiveNode(node.dataset.node));
+      node.addEventListener('focus', () => setActiveNode(node.dataset.node));
+      node.addEventListener('mouseleave', clearActiveNode);
+      node.addEventListener('blur', clearActiveNode);
+      node.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          setActiveNode(node.dataset.node);
+        }
+        if (event.key === 'Escape') clearActiveNode();
+      });
+    });
+
+    if (diagram) {
+      diagram.addEventListener('mouseleave', clearActiveNode);
+    }
+  }
 
   /* ── ANIMATED COUNTERS ── */
   const statEls = document.querySelectorAll('.stat-count');
