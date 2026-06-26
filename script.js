@@ -1,7 +1,6 @@
 /* ============================================================
    GENZRIX V3 — SHARED SCRIPT
    ============================================================ */
-
 import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -510,89 +509,347 @@ document.addEventListener('DOMContentLoaded', () => {
 
   mountServicesShowcase();
 
-  
-/* ── footer dots canvas ── */
- (function () {
-  const canvas = document.getElementById('dotCanvas');
+  /* ── CUBE GRID INTERACTION ── */
+
+const root = document.getElementById('cubesRoot');
+const grid = document.getElementById('cubesGrid');
+const dot  = document.getElementById('cursorDot');
+ 
+const COLS = 10;
+const ROWS = 7;
+const GAP  = 8;
+const PAD  = 30;
+ 
+const cubes = [];
+ 
+
+/* ════════════════════════════════════════════════════════
+   GENZRIX — Dust Text + Cube Grid Animation
+   cubes.js — single file, no dependencies
+════════════════════════════════════════════════════════ */
+
+/* ────────────────────────────────────────
+   1.  DUST TEXT
+──────────────────────────────────────── */
+(function () {
+  const wrap   = document.getElementById('dustWrap');
+  const canvas = document.getElementById('dustCanvas');
+  const hint   = wrap.querySelector('.dust-hint');
   const ctx    = canvas.getContext('2d');
- 
-  // Dot visual parameters — tuned to match the reference screenshot
-  const SPACING   = 5;     // tight grid, ~14 px between centres
-  const RADIUS    = 1.0;    // slightly larger, more visible dots
-  const BASE_DARK = 0.04;   // minimum opacity everywhere
- 
-  let dots = [];
+
   let W, H;
- 
-  function buildDots() {
-    W = canvas.width;
-    H = canvas.height;
- 
-    const cols = Math.ceil(W / SPACING) + 1;
-    const rows = Math.ceil(H / SPACING) + 1;
- 
-    dots = [];
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        const x = c * SPACING;
-        const y = r * SPACING;
- 
-        // Gradient brightness: brighter toward the bottom (matching the reference)
-        // Using a radial-ish falloff centred bottom-left
-        const normY  = y / H;                     // 0 = top, 1 = bottom
-        const normX  = x / W;                     // 0 = left, 1 = right
-        // Bottom rows glow more; left side slightly brighter than right
-        const zoneBrightness = Math.pow(normY, 1.2) * (1 - normX * 0.4);
- 
-        dots.push({
-          x, y,
-          period : 800 + Math.random() * 4000,
-          phase  : Math.random() * Math.PI * 2,
-          // Each dot oscillates between its own min/max shaped by zone
-          minA   : BASE_DARK + zoneBrightness * 0.05,
-          maxA   : 0 + zoneBrightness * 1.0
-        });
+  let particles  = [];
+  let mouse      = { x: -9999, y: -9999 };
+  let hovering   = false;
+  let dustRaf    = null;
+
+  /* --- resize & rebuild ---------------------------------------- */
+  function resize() {
+    W = canvas.width  = wrap.offsetWidth;
+    H = canvas.height = wrap.offsetHeight;
+    buildParticles();
+  }
+
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    W = wrap.offsetWidth;
+    H = wrap.offsetHeight;
+    canvas.width  = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width  = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.scale(dpr, dpr);
+    buildParticles();
+}
+
+  /* --- sample pixel positions from text ------------------------- */
+  function sampleText() {
+    const off = document.createElement('canvas');
+    off.width  = W;
+    off.height = H;
+    const ox = off.getContext('2d');
+
+    const fontSize = Math.min(W / 3.8, H * 0.72);
+    ox.fillStyle     = '#fff';
+    ox.font          = `900 ${fontSize}px "Arial Black", Arial, sans-serif`;
+    ox.textAlign     = 'center';
+    ox.textBaseline  = 'middle';
+    ox.fillText('GENZRIX', W / 2, H / 2);
+
+    const data = ox.getImageData(0, 0, W, H).data;
+    const pts  = [];
+    const step = 2;
+
+    for (let y = 0; y < H; y += step) {
+      for (let x = 0; x < W; x += step) {
+        const i = (y * W + x) * 4;
+        if (data[i + 3] > 128) pts.push({ x, y });
       }
     }
+    return pts;
   }
- 
-  function resize() {
-    const rect   = canvas.parentElement.getBoundingClientRect();
-    canvas.width  = rect.width;
-    canvas.height = rect.height;
-    buildDots();
+
+  /* --- create particle objects ---------------------------------- */
+  function buildParticles() {
+    const pts   = sampleText();
+    const count = Math.min(pts.length, 6000);
+    const step  = pts.length / count;
+
+    particles = [];
+    for (let i = 0; i < count; i++) {
+      const p = pts[Math.floor(i * step)];
+      particles.push({
+        tx:      p.x,
+        ty:      p.y,
+        x:       Math.random() * W,
+        y:       Math.random() * H,
+        vx:      0,
+        vy:      0,
+        size: Math.random() * 1.2 + 1,
+        opacity: Math.random() * 0.45 + 0.55,
+        hue: 5 + Math.random() * 35,
+      });
+    }
   }
- 
-  function draw(ts) {
+
+  /* --- animation loop ------------------------------------------ */
+  function dustTick() {
     ctx.clearRect(0, 0, W, H);
- 
-    for (const d of dots) {
-      const t     = (ts % d.period) / d.period;
-      const sine  = Math.sin(t * Math.PI * 2 + d.phase);
-      const alpha = d.minA + (sine * 0.5 + 0.5) * (d.maxA - d.minA);
- 
+
+    const mx = mouse.x;
+    const my = mouse.y;
+    const REPULSE_R   = 95;
+    const REPULSE_STR = 5.8;
+    const SPRING      = 0.08;
+    const DAMP        = 0.78;
+
+    for (let i = 0; i < particles.length; i++) {
+      const p  = particles[i];
+      const dx = mx - p.x;
+      const dy = my - p.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (hovering && dist < REPULSE_R) {
+        const force = (1 - dist / REPULSE_R) * REPULSE_STR;
+        const angle = Math.atan2(dy, dx);
+        p.vx -= Math.cos(angle) * force;
+        p.vy -= Math.sin(angle) * force;
+        p.vx += (Math.random() - 0.5) * 0.9;
+        p.vy += (Math.random() - 0.5) * 0.9;
+      } else {
+        p.vx += (p.tx - p.x) * SPRING;
+        p.vy += (p.ty - p.y) * SPRING;
+        p.vx *= DAMP;
+        p.vy *= DAMP;
+      }
+
+      p.x += p.vx;
+      p.y += p.vy;
+
+      const scattered = hovering && dist < REPULSE_R * 1.6;
+      const sat   = scattered ? '100%' : '85%';
+      const light = scattered ? '65%'  : '55%';
+
       ctx.beginPath();
-      // Rounded-square dots: use fillRect with slight rounding via arc
-      // The reference dots look like small rounded squares, not perfect circles
-      const s = RADIUS * 1.6;  // half-size of square
-      ctx.roundRect(d.x - s, d.y - s, s * 2, s * 2, 0.6);
-      // Interpolate from dark red (139,0,0) to white (255,255,255) based on brightness
-      const r = Math.round(139 + (255 - 139) * alpha);
-      const g = Math.round(0   + (255 - 0)   * alpha);
-      const b = Math.round(0   + (255 - 0)   * alpha);
-      ctx.fillStyle = `rgba(${r},${g},${b},${alpha.toFixed(3)})`;
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = `hsla(${p.hue}, ${sat}, ${light}, ${p.opacity})`;
       ctx.fill();
     }
- 
-    requestAnimationFrame(draw);
+
+    dustRaf = requestAnimationFrame(dustTick);
   }
- 
+
+  /* --- events --------------------------------------------------- */
+  wrap.addEventListener('mouseenter', () => {
+    hovering = true;
+    hint.style.opacity = '0';
+  });
+
+  wrap.addEventListener('mouseleave', () => {
+    hovering = false;
+    mouse    = { x: -9999, y: -9999 };
+    hint.style.opacity = '1';
+  });
+
+  wrap.addEventListener('mousemove', e => {
+    const r  = wrap.getBoundingClientRect();
+    mouse.x  = e.clientX - r.left;
+    mouse.y  = e.clientY - r.top;
+  });
+
+  wrap.addEventListener('touchmove', e => {
+    e.preventDefault();
+    hovering = true;
+    const r  = wrap.getBoundingClientRect();
+    mouse.x  = e.touches[0].clientX - r.left;
+    mouse.y  = e.touches[0].clientY - r.top;
+  }, { passive: false });
+
+  wrap.addEventListener('touchend', () => {
+    hovering = false;
+    mouse    = { x: -9999, y: -9999 };
+  });
+
+  /* --- init ----------------------------------------------------- */
   resize();
-  new ResizeObserver(resize).observe(canvas.parentElement);
-  requestAnimationFrame(draw);
+  window.addEventListener('resize', () => {
+    cancelAnimationFrame(dustRaf);
+    resize();
+    dustTick();
+  });
+  dustTick();
 })();
 
 
+/* ────────────────────────────────────────
+   2.  CUBE GRID
+──────────────────────────────────────── */
+(function () {
+  const root = document.getElementById('cubesRoot');
+  const grid = document.getElementById('cubesGrid');
+  const dot  = document.getElementById('cursorDot');
+
+  const COLS = 10;
+  const ROWS = 7;
+  const GAP  = 8;
+  const PAD  = 30;
+
+  let cubes     = [];
+  let mouse     = { x: -9999, y: -9999 };
+  let raf       = null;
+  let resizeTmr = null;
+
+  /* --- build / rebuild grid ------------------------------------ */
+  function buildCubes() {
+    grid.innerHTML = '';
+    cubes = [];
+
+    const totalW = root.offsetWidth  - PAD * 2 - GAP * (COLS - 1);
+    const totalH = root.offsetHeight - PAD * 2 - GAP * (ROWS - 1);
+    const cellW  = totalW / COLS;
+    const cellH  = totalH / ROWS;
+    const depth  = Math.min(cellW, cellH) * 0.5;
+    const halfD  = depth / 2;
+
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+
+        const wrap = document.createElement('div');
+        wrap.className = 'cube-wrap';
+
+        const cube = document.createElement('div');
+        cube.className = 'cube';
+
+        /* Front */
+        const front = document.createElement('div');
+        front.className = 'face face-front';
+        front.style.transform = `translateZ(${halfD}px)`;
+        cube.appendChild(front);
+
+        /* Back */
+        const back = document.createElement('div');
+        back.className = 'face face-back';
+        back.style.transform = `rotateY(180deg) translateZ(${halfD}px)`;
+        cube.appendChild(back);
+
+        /* Top */
+        const top = document.createElement('div');
+        top.className = 'face face-top';
+        top.style.height          = `${depth}px`;
+        top.style.top             = '0';
+        top.style.transformOrigin = 'top center';
+        top.style.transform       = `rotateX(90deg) translateZ(${halfD}px)`;
+        cube.appendChild(top);
+
+        /* Bottom */
+        const bottom = document.createElement('div');
+        bottom.className = 'face face-bottom';
+        bottom.style.height          = `${depth}px`;
+        bottom.style.bottom          = '0';
+        bottom.style.transformOrigin = 'bottom center';
+        bottom.style.transform       = `rotateX(-90deg) translateZ(${halfD}px)`;
+        cube.appendChild(bottom);
+
+        /* Left */
+        const left = document.createElement('div');
+        left.className = 'face face-left';
+        left.style.width           = `${depth}px`;
+        left.style.left            = '0';
+        left.style.transformOrigin = 'left center';
+        left.style.transform       = `rotateY(-90deg) translateZ(${halfD}px)`;
+        cube.appendChild(left);
+
+        /* Right */
+        const right = document.createElement('div');
+        right.className = 'face face-right';
+        right.style.width           = `${depth}px`;
+        right.style.right           = '0';
+        right.style.transformOrigin = 'right center';
+        right.style.transform       = `rotateY(90deg) translateZ(${halfD}px)`;
+        cube.appendChild(right);
+
+        wrap.appendChild(cube);
+        grid.appendChild(wrap);
+        cubes.push({ el: cube, r, c });
+      }
+    }
+  }
+
+  buildCubes();
+
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTmr);
+    resizeTmr = setTimeout(buildCubes, 150);
+  });
+
+  /* --- mouse events -------------------------------------------- */
+  root.addEventListener('mouseenter', () => {
+    dot.style.opacity = '1';
+  });
+
+  root.addEventListener('mouseleave', () => {
+    dot.style.opacity = '0';
+    mouse = { x: -9999, y: -9999 };
+    cubes.forEach(({ el }) => {
+      el.style.transform = 'rotateX(0deg) rotateY(0deg)';
+    });
+  });
+
+  root.addEventListener('mousemove', e => {
+    const rect = root.getBoundingClientRect();
+    mouse.x = e.clientX - rect.left;
+    mouse.y = e.clientY - rect.top;
+    dot.style.left = mouse.x + 'px';
+    dot.style.top  = mouse.y + 'px';
+    if (!raf) raf = requestAnimationFrame(animate);
+  });
+
+  /* --- animation loop ------------------------------------------ */
+  function animate() {
+    raf = null;
+
+    const rw = root.offsetWidth  / COLS;
+    const rh = root.offsetHeight / ROWS;
+
+    cubes.forEach(({ el, r, c }) => {
+      const cx   = (c + 0.5) * rw;
+      const cy   = (r + 0.5) * rh;
+      const dx   = mouse.x - cx;
+      const dy   = mouse.y - cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const radius = rw * 3.5;
+
+      if (dist < radius) {
+        const strength = Math.pow(Math.max(0, 1 - dist / radius), 1.1);
+        const rotY     =  (dx / rw) * 38 * strength;
+        const rotX     = -(dy / rh) * 38 * strength;
+        el.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      } else {
+        el.style.transform = 'rotateX(0deg) rotateY(0deg)';
+      }
+    });
+  }
+})();
 
   /* ── PORTFOLIO FILTER ── */
   const filterBtns = document.querySelectorAll('.filter-btn');
@@ -622,3 +879,4 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
+

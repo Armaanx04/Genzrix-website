@@ -3035,6 +3035,14 @@ top: -3px;
   max-width: 380px;
   font-weight: 400;
 }
+
+.footer__copy{
+  font-size: 0.88rem;
+  color: #0f1013;
+  margin-top: 32px;
+  text-align: center;
+  display: block;
+}
  
 /* ── Compliance badges ── */
 .footer__badges {
@@ -3113,21 +3121,7 @@ top: -3px;
  
 .footer__nav-link:hover { color: #0b1f4b; }
  
-/* ── Dot region — large empty area below content ── */
-.footer__dot-space {
-  position: relative;
-  z-index: 1;
-  height: 380px; /* the tall dot area visible in the screenshot */
-}
- 
-.footer__dot-wrapper {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 460px; /* ← control how tall the dot area is */
-  z-index: 0;
-}
+
 
 /* ── Bottom bar 
 .footer__bottom {
@@ -3388,6 +3382,172 @@ top: -3px;
   }
 }
 
+/* ── Footer Cubes Section ── */
+
+.footer__cubes-section {
+  position: relative;
+  height: 600px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 1400px;
+  padding: 20px;
+}
+
+/* ── Reset ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+
+/* ════════════════════════════════════════
+   DUST TEXT SECTION
+════════════════════════════════════════ */
+.dust-section {
+  width: 100%;
+  max-width: 1400px;
+  padding: 40px 20px 0;
+}
+
+#dustWrap {
+  width: 100%;
+  height: 340px;
+  border-radius: 12px 12px 0 0;
+  position: relative;
+  overflow: hidden;
+  cursor: none;
+}
+
+#dustCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.dust-hint {
+  position: absolute;
+  bottom: 16px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 12px;
+  color: rgba(21, 2, 70, 0.4);
+  letter-spacing: 2px;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+/* ════════════════════════════════════════
+   CUBE ANIMATION SECTION
+════════════════════════════════════════ */
+.footer__cubes-section {
+  width: 100%;
+  max-width: 1400px;
+  padding: 0 20px 40px;
+  height: 480px;
+}
+
+#cubesRoot {
+  width: 100%;
+  height: 480px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 0 0 12px 12px;
+  cursor: none;
+}
+
+#cubesGrid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(7, 1fr);
+  gap: 8px;
+  padding: 30px;
+}
+
+/* ── Each cell wrapper — holds perspective ── */
+.cube-wrap {
+  position: relative;
+  perspective: 500px;
+  perspective-origin: 50% 50%;
+}
+
+/* ── The cube itself ── */
+.cube {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(0deg) rotateY(0deg);
+  transition: transform 0.15s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* ── Shared face styles ── */
+.face {
+  position: absolute;
+  backface-visibility: hidden;
+  border: 2px dashed rgba(0, 0, 0, 0.75);
+  background: transparent;
+}
+
+/* ── Front & Back: fill the full cell face ── */
+.face-front,
+.face-back {
+  inset: 0;
+}
+
+/* ── Top & Bottom: width fills cell, height = depth (set via JS) ── */
+.face-top,
+.face-bottom {
+  left: 0;
+  right: 0;
+}
+
+/* ── Left & Right: height fills cell, width = depth (set via JS) ── */
+.face-left,
+.face-right {
+  top: 0;
+  bottom: 0;
+}
+
+/* ── Face colours ── */
+.face-front  { background: transparent;             border-color: rgba(0, 0, 0, 0.75); }
+.face-back   { background: transparent;             border-color: rgba(90,  60,  160, 0.30); }
+.face-top    { background: rgba(60,  30, 100, 0.6); border-color: rgba(4, 0, 11, 0.8); }
+.face-bottom { background: rgba(30,  15,  60, 0.4); border-color: rgba(0, 0, 0, 0.4); }
+.face-left   { background: rgba(40,  20,  80, 0.4); border-color: rgba(0, 0, 0, 0.5); }
+.face-right  { background: rgba(40,  20,  80, 0.6); border-color: rgba(1, 0, 2, 0.7); }
+
+/* ── Custom cursor dot ── */
+#cursorDot {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #29007a;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  box-shadow: 0 0 8px 2px rgba(192, 160, 255, 0.45);
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  #dustWrap  { height: 200px; }
+  #cubesRoot { height: 320px; }
+  #cubesGrid {
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 5px;
+    padding: 16px;
+  }
+}
 
 @keyframes float {
     0% {

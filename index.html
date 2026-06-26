@@ -658,11 +658,6 @@
    
 <footer class="footer" role="contentinfo">
  
-  <!-- Canvas fills entire footer -->
-  <div class="footer__dot-wrapper">
-    <canvas class="footer__dots" id="dotCanvas"></canvas>
-  </div>
- 
   <!-- Top: brand + nav -->
   <div class="footer__top">
  
@@ -754,15 +749,19 @@
   </div>
  
   <!-- Tall empty dot-visible area (matches the screenshot's large dot region) -->
-  <div class="footer__dot-space"></div>
- 
+  <div class="footer__cubes-section">
+    <div id="dustWrap">
+      <canvas id="dustCanvas"></canvas>
+      <div class="dust-hint">hover to scatter · move away to reform</div>
+    </div>
+
   <!-- Bottom bar -->
   <div class="">
     <span class="footer__copy">&copy; 2025 GenZrix. All rights reserved.</span>
   </div>
  
 </footer>
- 
+
 
   <script type="module" src="/script.js"></script>
 </body>
