@@ -3085,6 +3085,54 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) .nav-hamburger spa
 
 .client-card .card-icon { width: 36px; height: 36px; margin-bottom: 16px; }
 
+/* Clients grid — unified group settle (single composition) */
+.clients-grid--settle {
+  transform-origin: 50% 50%;
+}
+
+.clients-grid--settle:not(.is-prepared):not(.is-settled) {
+  opacity: 0;
+}
+
+.clients-grid--settle.is-prepared:not(.is-settling):not(.is-settled) {
+  opacity: 0.88;
+  transform: translate3d(0, 27px, 0) scale(0.9);
+}
+
+.clients-grid--settle.is-settling {
+  will-change: transform, opacity;
+  animation: clients-group-settle 1.2s cubic-bezier(0.33, 0, 0.2, 1) forwards;
+}
+
+.clients-grid--settle.is-settled {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+@keyframes clients-group-settle {
+  from {
+    opacity: 0.88;
+    transform: translate3d(0, 27px, 0) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clients-grid--settle:not(.is-settled) {
+    opacity: 1;
+    transform: none;
+  }
+
+  .clients-grid--settle.is-settling {
+    animation: none;
+    will-change: auto;
+  }
+}
+
 /* ── JOIN BANNER ── */
 .join-banner {
   background: var(--navy);

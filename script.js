@@ -75,6 +75,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
   observeFadeUps();
 
+  /* ── CLIENTS: unified group settle ── */
+  const clientsSection = document.querySelector('.ds-section--clients');
+  if (clientsSection) {
+    const clientsGrid = clientsSection.querySelector('.clients-grid--settle');
+    const settleReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (clientsGrid) {
+      if (settleReducedMotion) {
+        clientsGrid.classList.add('is-settled');
+      } else {
+        clientsGrid.classList.add('is-prepared');
+
+        const runClientsSettle = () => {
+          if (clientsGrid.classList.contains('is-settled') || clientsGrid.classList.contains('is-settling')) {
+            return;
+          }
+
+          clientsGrid.classList.add('is-settling');
+          clientsGrid.addEventListener('animationend', (event) => {
+            if (event.animationName !== 'clients-group-settle') return;
+            clientsGrid.classList.remove('is-settling', 'is-prepared');
+            clientsGrid.classList.add('is-settled');
+          }, { once: true });
+        };
+
+        const clientsSettleObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              runClientsSettle();
+              clientsSettleObserver.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+        clientsSettleObserver.observe(clientsSection);
+      }
+    }
+  }
+
   /* ── HOW IT WORKS: premium pipeline sequence ── */
   const processSection = document.querySelector('.ds-section--process');
   if (processSection) {
