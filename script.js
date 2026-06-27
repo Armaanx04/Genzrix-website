@@ -345,29 +345,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const heroSection = document.querySelector('.hero');
   if (heroSection) {
-    document.querySelectorAll('.hero-word').forEach((word, i) => {
-      word.style.animationDelay = `${0.12 + i * 0.08}s`;
-    });
-
     const diagram = heroSection.querySelector('.hero-diagram');
+    const parallaxEl = heroSection.querySelector('.hero-diagram-parallax');
+    const heroRight = heroSection.querySelector('.hero-right');
     const nodes = heroSection.querySelectorAll('.hero-node');
     const lines = heroSection.querySelectorAll('.hero-line');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const lineDrawEasing = 'cubic-bezier(0.22, 1, 0.36, 1)';
+    const lineDrawStart = 0.95;
 
-    if (diagram && nodes.length && !reducedMotion) {
+    if (diagram && lines.length && !reducedMotion) {
       lines.forEach((line, index) => {
         const length = line.getTotalLength?.() ?? 140;
         line.style.strokeDasharray = `${length}`;
         line.style.strokeDashoffset = `${length}`;
-        line.style.animation = `heroLineDraw 1s cubic-bezier(0.22, 1, 0.36, 1) ${0.35 + index * 0.08}s forwards`;
+        line.style.animation = `heroLineDraw 0.75s ${lineDrawEasing} ${lineDrawStart + index * 0.07}s forwards`;
+      });
+    }
+
+    if (parallaxEl && heroRight && !reducedMotion) {
+      const maxMove = 10;
+      let rafId = 0;
+      let targetX = 0;
+      let targetY = 0;
+      let currentX = 0;
+      let currentY = 0;
+
+      const applyParallax = () => {
+        currentX += (targetX - currentX) * 0.12;
+        currentY += (targetY - currentY) * 0.12;
+        parallaxEl.style.transform = `translate(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px)`;
+        if (Math.abs(targetX - currentX) > 0.05 || Math.abs(targetY - currentY) > 0.05) {
+          rafId = requestAnimationFrame(applyParallax);
+        }
+      };
+
+      heroRight.addEventListener('mousemove', (event) => {
+        const rect = heroRight.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width - 0.5;
+        const y = (event.clientY - rect.top) / rect.height - 0.5;
+        targetX = x * maxMove * 2;
+        targetY = y * maxMove * 2;
+        cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(applyParallax);
       });
 
-      if (!document.getElementById('hero-line-draw-style')) {
-        const style = document.createElement('style');
-        style.id = 'hero-line-draw-style';
-        style.textContent = '@keyframes heroLineDraw { to { stroke-dashoffset: 0; } }';
-        document.head.appendChild(style);
-      }
+      heroRight.addEventListener('mouseleave', () => {
+        targetX = 0;
+        targetY = 0;
+        cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(applyParallax);
+      });
     }
 
     const setActiveNode = (nodeId) => {
