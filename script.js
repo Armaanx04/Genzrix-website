@@ -1,7 +1,6 @@
 /* ============================================================
    GENZRIX V3 — SHARED SCRIPT
    ============================================================ */
-
 import { createClient } from '@supabase/supabase-js';
 import { initSiteBackground } from './site-background.js';
 import { initHeroShapeGrid } from './hero-shapegrid.js';
@@ -9,7 +8,12 @@ import { initHeroShapeGrid } from './hero-shapegrid.js';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let supabase = null;
+
+if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+  supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+
 
 /* ── Category SVG icons for portfolio cards ── */
 const categoryIcons = {
@@ -898,7 +902,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   mountServicesShowcase();
 
-  /* ── WHY GENZRIX STACK (scroll-driven) ── */
   function initWhyGenzrixStack() {
     const scrollRoot = document.querySelector('[data-why-stack-scroll]');
     if (!scrollRoot) return;
@@ -1087,6 +1090,286 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   initWhyGenzrixStack();
+
+  /* ── FOOTER: Dust Text + Cube Grid (Alina) ── */
+  (function () {
+    const wrap = document.getElementById('dustWrap');
+    const canvas = document.getElementById('dustCanvas');
+    if (!wrap || !canvas) return;
+
+    const hint = wrap.querySelector('.dust-hint');
+    const ctx = canvas.getContext('2d');
+
+    let W;
+    let H;
+    let particles = [];
+    let mouse = { x: -9999, y: -9999 };
+    let hovering = false;
+    let dustRaf = null;
+
+    function resize() {
+      const dpr = window.devicePixelRatio || 1;
+      W = wrap.offsetWidth;
+      H = wrap.offsetHeight;
+      canvas.width = W * dpr;
+      canvas.height = H * dpr;
+      canvas.style.width = `${W}px`;
+      canvas.style.height = `${H}px`;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(dpr, dpr);
+      buildParticles();
+    }
+
+    function sampleText() {
+      const off = document.createElement('canvas');
+      off.width = W;
+      off.height = H;
+      const ox = off.getContext('2d');
+      const fontSize = Math.min(W / 3.8, H * 0.72);
+      ox.fillStyle = '#fff';
+      ox.font = `900 ${fontSize}px "Arial Black", Arial, sans-serif`;
+      ox.textAlign = 'center';
+      ox.textBaseline = 'middle';
+      ox.fillText('GENZRIX', W / 2, H / 2);
+
+      const data = ox.getImageData(0, 0, W, H).data;
+      const pts = [];
+      for (let y = 0; y < H; y += 2) {
+        for (let x = 0; x < W; x += 2) {
+          const i = (y * W + x) * 4;
+          if (data[i + 3] > 128) pts.push({ x, y });
+        }
+      }
+      return pts;
+    }
+
+    function buildParticles() {
+      const pts = sampleText();
+      const count = Math.min(pts.length, 6000);
+      const step = pts.length / count;
+      particles = [];
+      for (let i = 0; i < count; i += 1) {
+        const p = pts[Math.floor(i * step)];
+        particles.push({
+          tx: p.x,
+          ty: p.y,
+          x: Math.random() * W,
+          y: Math.random() * H,
+          vx: 0,
+          vy: 0,
+          size: Math.random() * 1.2 + 1,
+          opacity: Math.random() * 0.45 + 0.55,
+          hue: 5 + Math.random() * 35,
+        });
+      }
+    }
+
+    function dustTick() {
+      ctx.clearRect(0, 0, W, H);
+      const mx = mouse.x;
+      const my = mouse.y;
+      const REPULSE_R = 95;
+      const REPULSE_STR = 5.8;
+      const SPRING = 0.08;
+      const DAMP = 0.78;
+
+      for (let i = 0; i < particles.length; i += 1) {
+        const p = particles[i];
+        const dx = mx - p.x;
+        const dy = my - p.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (hovering && dist < REPULSE_R) {
+          const force = (1 - dist / REPULSE_R) * REPULSE_STR;
+          const angle = Math.atan2(dy, dx);
+          p.vx -= Math.cos(angle) * force;
+          p.vy -= Math.sin(angle) * force;
+          p.vx += (Math.random() - 0.5) * 0.9;
+          p.vy += (Math.random() - 0.5) * 0.9;
+        } else {
+          p.vx += (p.tx - p.x) * SPRING;
+          p.vy += (p.ty - p.y) * SPRING;
+          p.vx *= DAMP;
+          p.vy *= DAMP;
+        }
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        const scattered = hovering && dist < REPULSE_R * 1.6;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${p.hue}, ${scattered ? '100%' : '85%'}, ${scattered ? '65%' : '55%'}, ${p.opacity})`;
+        ctx.fill();
+      }
+
+      dustRaf = requestAnimationFrame(dustTick);
+    }
+
+    wrap.addEventListener('mouseenter', () => {
+      hovering = true;
+      if (hint) hint.style.opacity = '0';
+    });
+    wrap.addEventListener('mouseleave', () => {
+      hovering = false;
+      mouse = { x: -9999, y: -9999 };
+      if (hint) hint.style.opacity = '1';
+    });
+    wrap.addEventListener('mousemove', (e) => {
+      const r = wrap.getBoundingClientRect();
+      mouse.x = e.clientX - r.left;
+      mouse.y = e.clientY - r.top;
+    });
+    wrap.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      hovering = true;
+      const r = wrap.getBoundingClientRect();
+      mouse.x = e.touches[0].clientX - r.left;
+      mouse.y = e.touches[0].clientY - r.top;
+    }, { passive: false });
+    wrap.addEventListener('touchend', () => {
+      hovering = false;
+      mouse = { x: -9999, y: -9999 };
+    });
+
+    resize();
+    window.addEventListener('resize', () => {
+      cancelAnimationFrame(dustRaf);
+      resize();
+      dustTick();
+    });
+    dustTick();
+  })();
+
+  (function () {
+    const root = document.getElementById('cubesRoot');
+    const grid = document.getElementById('cubesGrid');
+    const dot = document.getElementById('cursorDot');
+    if (!root || !grid) return;
+
+    const COLS = 10;
+    const ROWS = 7;
+    const GAP = 8;
+    const PAD = 30;
+    let cubes = [];
+    let mouse = { x: -9999, y: -9999 };
+    let raf = null;
+    let resizeTmr = null;
+
+    function buildCubes() {
+      grid.innerHTML = '';
+      cubes = [];
+      const totalW = root.offsetWidth - PAD * 2 - GAP * (COLS - 1);
+      const totalH = root.offsetHeight - PAD * 2 - GAP * (ROWS - 1);
+      const cellW = totalW / COLS;
+      const cellH = totalH / ROWS;
+      const depth = Math.min(cellW, cellH) * 0.5;
+      const halfD = depth / 2;
+
+      for (let r = 0; r < ROWS; r += 1) {
+        for (let c = 0; c < COLS; c += 1) {
+          const wrapEl = document.createElement('div');
+          wrapEl.className = 'cube-wrap';
+          const cube = document.createElement('div');
+          cube.className = 'cube';
+
+          const faces = [
+            ['face-front', `translateZ(${halfD}px)`],
+            ['face-back', `rotateY(180deg) translateZ(${halfD}px)`],
+          ];
+          faces.forEach(([cls, transform]) => {
+            const face = document.createElement('div');
+            face.className = `face ${cls}`;
+            face.style.transform = transform;
+            cube.appendChild(face);
+          });
+
+          const top = document.createElement('div');
+          top.className = 'face face-top';
+          top.style.height = `${depth}px`;
+          top.style.top = '0';
+          top.style.transformOrigin = 'top center';
+          top.style.transform = `rotateX(90deg) translateZ(${halfD}px)`;
+          cube.appendChild(top);
+
+          const bottom = document.createElement('div');
+          bottom.className = 'face face-bottom';
+          bottom.style.height = `${depth}px`;
+          bottom.style.bottom = '0';
+          bottom.style.transformOrigin = 'bottom center';
+          bottom.style.transform = `rotateX(-90deg) translateZ(${halfD}px)`;
+          cube.appendChild(bottom);
+
+          const left = document.createElement('div');
+          left.className = 'face face-left';
+          left.style.width = `${depth}px`;
+          left.style.left = '0';
+          left.style.transformOrigin = 'left center';
+          left.style.transform = `rotateY(-90deg) translateZ(${halfD}px)`;
+          cube.appendChild(left);
+
+          const right = document.createElement('div');
+          right.className = 'face face-right';
+          right.style.width = `${depth}px`;
+          right.style.right = '0';
+          right.style.transformOrigin = 'right center';
+          right.style.transform = `rotateY(90deg) translateZ(${halfD}px)`;
+          cube.appendChild(right);
+
+          wrapEl.appendChild(cube);
+          grid.appendChild(wrapEl);
+          cubes.push({ el: cube, r, c });
+        }
+      }
+    }
+
+    buildCubes();
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTmr);
+      resizeTmr = setTimeout(buildCubes, 150);
+    });
+
+    root.addEventListener('mouseenter', () => {
+      if (dot) dot.style.opacity = '1';
+    });
+    root.addEventListener('mouseleave', () => {
+      if (dot) dot.style.opacity = '0';
+      mouse = { x: -9999, y: -9999 };
+      cubes.forEach(({ el }) => {
+        el.style.transform = 'rotateX(0deg) rotateY(0deg)';
+      });
+    });
+    root.addEventListener('mousemove', (e) => {
+      const rect = root.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+      if (dot) {
+        dot.style.left = `${mouse.x}px`;
+        dot.style.top = `${mouse.y}px`;
+      }
+      if (!raf) raf = requestAnimationFrame(animate);
+    });
+
+    function animate() {
+      raf = null;
+      const rw = root.offsetWidth / COLS;
+      const rh = root.offsetHeight / ROWS;
+      cubes.forEach(({ el, r, c }) => {
+        const cx = (c + 0.5) * rw;
+        const cy = (r + 0.5) * rh;
+        const dx = mouse.x - cx;
+        const dy = mouse.y - cy;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const radius = rw * 3.5;
+        if (dist < radius) {
+          const strength = (1 - dist / radius) ** 1.1;
+          el.style.transform = `rotateX(${-(dy / rh) * 38 * strength}deg) rotateY(${(dx / rw) * 38 * strength}deg)`;
+        } else {
+          el.style.transform = 'rotateX(0deg) rotateY(0deg)';
+        }
+      });
+    }
+  })();
 
   /* ── PORTFOLIO FILTER ── */
   const filterBtns = document.querySelectorAll('.filter-btn');

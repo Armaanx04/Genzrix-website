@@ -1,9 +1,21 @@
+import Cubes from './components/Cubes';
+
 function App() {
-  return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <p>Start prompting (or editing) to see magic happen :)</p>
-    </div>
-  );
+  return <div style={{ height: '600px', position: 'relative' }}>
+  <Cubes 
+    gridSize={8}
+    maxAngle={45}
+    radius={3}
+    borderStyle="2px dashed #B497CF"
+    faceColor="#1a1a2e"
+    rippleColor="#ff6b6b"
+    rippleSpeed={1.5}
+    autoAnimate
+    rippleOnClick
+  />
+</div>
 }
 
 export default App;
+
+
