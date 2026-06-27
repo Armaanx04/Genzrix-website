@@ -79,6 +79,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   observeFadeUps();
 
+  /* ── IDEA CTA: minimal glass panel entrance ── */
+  const ideaSection = document.querySelector('.idea-section');
+  if (ideaSection) {
+    const ideaReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (ideaReducedMotion) {
+      ideaSection.classList.add('is-visible');
+    } else {
+      const ideaObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            ideaSection.classList.add('is-visible');
+            ideaObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+      ideaObserver.observe(ideaSection);
+    }
+  }
+
   /* ── CLIENTS: unified group settle ── */
   const clientsSection = document.querySelector('.ds-section--clients');
   if (clientsSection) {
@@ -1143,6 +1164,31 @@ document.addEventListener('DOMContentLoaded', () => {
       return pts;
     }
 
+    function pickDustColor() {
+      const roll = Math.random();
+      let base;
+
+      // Metallic silver / graphite — ~95% silver impression
+      if (roll < 0.68) {
+        base = { r: 217, g: 217, b: 221 }; // Satin silver #D9D9DD
+      } else if (roll < 0.90) {
+        base = { r: 184, g: 186, b: 194 }; // Brushed mid-tone #B8BAC2
+      } else {
+        base = { r: 142, g: 145, b: 155 }; // Gunmetal shadow #8E919B
+      }
+
+      const micro = 0.96 + Math.random() * 0.08;
+      const warmth = 0.98 + Math.random() * 0.04;
+
+      return {
+        r: Math.round(Math.min(255, base.r * micro * warmth)),
+        g: Math.round(Math.min(255, base.g * micro * warmth)),
+        b: Math.round(Math.min(255, base.b * micro)),
+        // Tiny ambient violet bounce from footer environment — never dominant
+        env: Math.random() * 0.035,
+      };
+    }
+
     function buildParticles() {
       const pts = sampleText();
       const count = Math.min(pts.length, 6000);
@@ -1157,9 +1203,10 @@ document.addEventListener('DOMContentLoaded', () => {
           y: Math.random() * H,
           vx: 0,
           vy: 0,
-          size: Math.random() * 1.2 + 1,
-          opacity: Math.random() * 0.45 + 0.55,
-          hue: 5 + Math.random() * 35,
+          size: Math.random() * 1.25 + 0.85,
+          opacity: Math.random() * 0.38 + 0.58,
+          color: pickDustColor(),
+          brightness: 0.86 + Math.random() * 0.18,
         });
       }
     }
@@ -1197,11 +1244,26 @@ document.addEventListener('DOMContentLoaded', () => {
         p.y += p.vy;
 
         const scattered = hovering && dist < REPULSE_R * 1.6;
+        const { r, g, b, env } = p.color;
+        const lum = scattered ? p.brightness * 1.05 : p.brightness;
+        const alpha = scattered ? Math.min(1, p.opacity * 1.03) : p.opacity;
+
+        // Subtle environmental cool reflection from page violet lighting
+        const envLift = env * (0.6 + (1 - p.y / H) * 0.4);
+        let pr = Math.round(Math.min(255, r * lum));
+        let pg = Math.round(Math.min(255, g * lum));
+        let pb = Math.round(Math.min(255, (b * lum) + envLift * 5));
+
+        ctx.shadowBlur = scattered ? 2.4 : 1.35;
+        ctx.shadowColor = `rgba(255, 255, 255, ${alpha * (scattered ? 0.20 : 0.12)})`;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${p.hue}, ${scattered ? '100%' : '85%'}, ${scattered ? '65%' : '55%'}, ${p.opacity})`;
+        ctx.fillStyle = `rgba(${pr}, ${pg}, ${pb}, ${alpha})`;
         ctx.fill();
       }
+
+      ctx.shadowBlur = 0;
+      ctx.shadowColor = 'transparent';
 
       dustRaf = requestAnimationFrame(dustTick);
     }
