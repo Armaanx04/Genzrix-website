@@ -4,6 +4,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { initSiteBackground } from './site-background.js';
 import { initHeroShapeGrid } from './hero-shapegrid.js';
+import { initServicesPage } from './services-page.js';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -950,6 +951,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   mountServicesShowcase();
+
+  initServicesPage();
 
   function initWhyGenzrixStack() {
     const scrollRoot = document.querySelector('[data-why-stack-scroll]');
