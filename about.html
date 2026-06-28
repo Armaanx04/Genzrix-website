@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Our Work — GenZrix</title>
-  <meta name="description" content="Explore GenZrix's portfolio of real projects across design, development, marketing, and events. Real clients. Real results." />
+  <title>About Us — GenZrix</title>
+  <meta name="description" content="Learn about GenZrix's mission and vision — building India's most trusted youth-powered execution infrastructure for growing businesses." />
   <link rel="icon" href="/favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -24,9 +24,9 @@
       </div>
       <nav class="nav-links" aria-label="Primary navigation">
         <a href="index.html">Home</a>
-        <a href="about.html">About Us</a>
+        <a href="about.html" class="active">About Us</a>
         <a href="services.html">Services</a>
-        <a href="work.html" class="active">Our Work</a>
+        <a href="work.html">Our Work</a>
         <a href="careers.html">Careers</a>
         <a href="contact.html" class="nav-cta">Contact Us</a>
       </nav>
@@ -36,51 +36,72 @@
     </div>
     <nav class="nav-mobile" aria-label="Mobile navigation">
       <a href="index.html">Home</a>
-      <a href="about.html">About Us</a>
+      <a href="about.html" class="active">About Us</a>
       <a href="services.html">Services</a>
-      <a href="work.html" class="active">Our Work</a>
+      <a href="work.html">Our Work</a>
       <a href="careers.html">Careers</a>
       <a href="contact.html">Contact Us</a>
     </nav>
   </header>
 
-  <main>
+  <main class="about-page">
 
     <!-- HERO -->
-    <section class="inner-hero">
+    <section class="about-page-hero">
+      <div class="about-page-hero-bg" aria-hidden="true"></div>
       <div class="container">
-        <span class="section-label fade-up">Portfolio</span>
-        <h1 class="fade-up fade-up-delay-1">Our Work</h1>
-        <p class="fade-up fade-up-delay-2">Real projects. Real clients. Real results.</p>
-      </div>
-    </section>
-
-    <!-- PORTFOLIO -->
-    <section class="section-off">
-      <div class="container">
-
-        <!-- Filter Bar -->
-        <div class="filter-bar fade-up">
-          <button class="filter-btn active" data-filter="all">All</button>
-          <button class="filter-btn" data-filter="design">Design</button>
-          <button class="filter-btn" data-filter="development">Development</button>
-          <button class="filter-btn" data-filter="marketing">Marketing</button>
-          <button class="filter-btn" data-filter="events">Events</button>
-        </div>
-
-        <!-- Portfolio Grid — dynamically loaded from Supabase -->
-        <div class="portfolio-grid" id="portfolio-grid">
-          <p style="text-align:center; color:var(--muted); grid-column:1/-1; padding:60px 0;">Loading projects...</p>
+        <div class="about-page-hero-inner fade-up">
+          <span class="section-label">About Us</span>
+          <h1>We are building India's most trusted youth-powered execution infrastructure.</h1>
         </div>
       </div>
     </section>
 
-    <!-- CTA -->
-    <section class="join-banner">
+    <!-- VISION & MISSION -->
+    <section class="about-vm-section" aria-labelledby="about-vision-heading">
+      <div class="about-vm-section-bg" aria-hidden="true"></div>
       <div class="container">
-        <h2 class="fade-up" style="margin-bottom:16px;">Want your project to be next?</h2>
-        <p class="fade-up fade-up-delay-1">Share your brief and we'll build something you're proud to show.</p>
-        <a href="contact.html" class="btn-white fade-up fade-up-delay-2" style="margin-top:8px;">Work With Us</a>
+        <div class="about-vm-grid">
+          <div class="about-vm-col about-vm-col--vision fade-up fade-up-delay-1">
+            <div class="about-page-section-header about-vm-subheader">
+              <h2 id="about-vision-heading">Vision</h2>
+              <div class="section-sep"></div>
+            </div>
+            <p class="about-mission-intro">To become India's most trusted youth-powered execution infrastructure, enabling organizations to access innovative, affordable, and scalable solutions while creating meaningful opportunities for the next generation of professionals.</p>
+          </div>
+          <div class="about-vm-col about-vm-col--mission fade-up fade-up-delay-2">
+            <div class="about-page-section-header about-vm-subheader">
+              <h2>Mission</h2>
+              <div class="section-sep"></div>
+            </div>
+            <p class="about-mission-intro">To deliver exceptional execution by empowering students with real-world experience, enabling organizations with reliable, affordable, and scalable solutions, while building a thriving ecosystem that creates lasting value for clients, professionals, and innovation.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- OUR CORE PRINCIPLES -->
+    <section class="about-principles-section" aria-labelledby="about-principles-heading">
+      <div class="about-principles-section-bg" aria-hidden="true"></div>
+      <div class="container">
+        <div class="section-header about-page-section-header fade-up">
+          <h2 id="about-principles-heading">Our Core Principles</h2>
+          <div class="section-sep"></div>
+        </div>
+        <div class="about-principles-grid">
+          <div class="about-principle fade-up fade-up-delay-1">
+            <span class="about-principle-marker" aria-hidden="true"></span>
+            <p>Deliver exceptional execution services that help clients achieve their goals efficiently, professionally, and affordably.</p>
+          </div>
+          <div class="about-principle fade-up fade-up-delay-2">
+            <span class="about-principle-marker" aria-hidden="true"></span>
+            <p>Transform talented students into industry-ready professionals through practical experience, mentorship, and meaningful work opportunities.</p>
+          </div>
+          <div class="about-principle fade-up fade-up-delay-3">
+            <span class="about-principle-marker" aria-hidden="true"></span>
+            <p>Build a sustainable and scalable execution ecosystem that drives innovation, creates opportunities, and delivers long-term value to all stakeholders.</p>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -107,7 +128,7 @@
         <div>
           <h5>Get in Touch</h5>
           <a href="mailto:contact@genzrix.com" class="footer-contact-email">contact@genzrix.com</a>
-          <a href="tel:+919700656425" class="footer-contact-phone">+91 97006 56425</a>
+          <a href="tel:+919700656425" class="footer-contact-phone">+9197006 56425</a>
           <p class="footer-contact-location">Hyderabad, India</p>
           <div class="footer-socials">
             <a href="https://linkedin.com/company/genzrix" target="_blank" rel="noopener" aria-label="LinkedIn">
