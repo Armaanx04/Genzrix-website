@@ -26,7 +26,6 @@
         <a href="index.html">Home</a>
         <a href="about.html">About Us</a>
         <a href="services.html">Services</a>
-        <a href="work.html">Our Work</a>
         <a href="careers.html" class="active">Careers</a>
         <a href="contact.html" class="nav-cta">Contact Us</a>
       </nav>
@@ -38,59 +37,64 @@
       <a href="index.html">Home</a>
       <a href="about.html">About Us</a>
       <a href="services.html">Services</a>
-      <a href="work.html">Our Work</a>
       <a href="careers.html" class="active">Careers</a>
       <a href="contact.html">Contact Us</a>
     </nav>
   </header>
 
-  <main>
+  <main class="careers-page">
 
     <!-- HERO -->
-    <section class="inner-hero">
-      <div class="container">
+    <section class="inner-hero careers-page-hero" aria-labelledby="careers-hero-heading">
+      <div class="container careers-page-hero-inner">
         <span class="section-label fade-up">Join the Team</span>
-        <h1 class="fade-up fade-up-delay-1" style="max-width:700px;">You have the skill.<br>We have the stage.</h1>
-        <p class="fade-up fade-up-delay-2" style="max-width:580px; margin-top:16px;">GenZrix is not an internship program and not a freelancing platform. It is a managed execution company where skilled Gen Z talent works on real client briefs, builds real portfolios, and earns verified credentials.</p>
+        <h1 id="careers-hero-heading" class="fade-up fade-up-delay-1">You have the skill.<br>We have the stage.</h1>
+        <p class="careers-page-hero-lead fade-up fade-up-delay-2">GenZrix is not an internship program and not a freelancing platform. It is a managed execution company where skilled Gen Z talent works on real client briefs, builds real portfolios, and earns verified credentials.</p>
       </div>
     </section>
 
     <!-- VALUE CARDS -->
-    <section class="section-off">
+    <section class="careers-benefits section-off" aria-labelledby="careers-benefits-heading">
       <div class="container">
-        <div class="section-header fade-up">
+        <div class="careers-section-header fade-up">
           <span class="section-label">Why Join Us</span>
-          <h2>What you get when you join GenZrix.</h2>
+          <h2 id="careers-benefits-heading">What you get when you join GenZrix.</h2>
         </div>
-        <div class="value-cards">
-          <div class="value-card fade-up fade-up-delay-1">
-            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="#0B1F4B" stroke-width="1.5" aria-hidden="true">
-              <rect x="6" y="8" width="28" height="24" rx="2"/>
-              <path d="M6 16 h28"/>
-              <line x1="14" y1="24" x2="26" y2="24"/>
-              <line x1="14" y1="28" x2="20" y2="28"/>
-            </svg>
+        <div class="value-cards careers-benefits__grid">
+          <div class="value-card careers-benefit-card fade-up fade-up-delay-1">
+            <div class="careers-benefit-card__icon" aria-hidden="true">
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="6" y="8" width="28" height="24" rx="2"/>
+                <path d="M6 16 h28"/>
+                <line x1="14" y1="24" x2="26" y2="24"/>
+                <line x1="14" y1="28" x2="20" y2="28"/>
+              </svg>
+            </div>
             <h3>Real Work</h3>
             <p>Every project is a live client brief. No fake tasks, no busywork. You're working on projects that ship, campaigns that run, and products that users actually use.</p>
           </div>
-          <div class="value-card fade-up fade-up-delay-2">
-            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="#0B1F4B" stroke-width="1.5" aria-hidden="true">
-              <rect x="8" y="4" width="24" height="32" rx="2"/>
-              <line x1="14" y1="12" x2="26" y2="12"/>
-              <line x1="14" y1="18" x2="26" y2="18"/>
-              <line x1="14" y1="24" x2="20" y2="24"/>
-              <path d="M24 28 l4 4 6-6" stroke="#C8102E"/>
-            </svg>
+          <div class="value-card careers-benefit-card fade-up fade-up-delay-2">
+            <div class="careers-benefit-card__icon" aria-hidden="true">
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="8" y="4" width="24" height="32" rx="2"/>
+                <line x1="14" y1="12" x2="26" y2="12"/>
+                <line x1="14" y1="18" x2="26" y2="18"/>
+                <line x1="14" y1="24" x2="20" y2="24"/>
+                <path d="M24 28 l4 4 6-6" class="careers-benefit-card__accent-stroke"/>
+              </svg>
+            </div>
             <h3>Real Portfolio</h3>
             <p>Walk away with work that is genuinely portfolio-worthy. Case studies, project links, and tangible proof of what you built — not certificates of participation.</p>
           </div>
-          <div class="value-card fade-up fade-up-delay-3">
-            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="#0B1F4B" stroke-width="1.5" aria-hidden="true">
-              <circle cx="20" cy="18" r="8"/>
-              <path d="M10 36a10 10 0 0 1 20 0"/>
-              <path d="M26 12 l2-4 2 4"/>
-              <circle cx="28" cy="10" r="2.5" stroke="#C8102E"/>
-            </svg>
+          <div class="value-card careers-benefit-card fade-up fade-up-delay-3">
+            <div class="careers-benefit-card__icon" aria-hidden="true">
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="20" cy="18" r="8"/>
+                <path d="M10 36a10 10 0 0 1 20 0"/>
+                <path d="M26 12 l2-4 2 4"/>
+                <circle cx="28" cy="10" r="2.5" class="careers-benefit-card__accent-fill"/>
+              </svg>
+            </div>
             <h3>Verified Credentials</h3>
             <p>Your contribution is documented and verified by GenZrix. A formal record of your role, domain, and impact — something you can put on a resume and stand behind.</p>
           </div>
@@ -99,14 +103,14 @@
     </section>
 
     <!-- DOMAINS -->
-    <section class="section-white">
+    <section class="careers-domains section-white" aria-labelledby="careers-domains-heading">
       <div class="container">
-        <div class="section-header fade-up">
+        <div class="careers-section-header fade-up">
           <span class="section-label">Open Domains</span>
-          <h2>Where we recruit.</h2>
+          <h2 id="careers-domains-heading">Where we recruit.</h2>
           <p class="section-subtext">We recruit skilled individuals across every domain we execute in. If you're good at what you do and hungry to prove it — there's a place for you here.</p>
         </div>
-        <div class="domains-grid fade-up fade-up-delay-1">
+        <div class="domains-grid careers-domains__grid fade-up fade-up-delay-1">
           <div class="domain-tag">Design</div>
           <div class="domain-tag">Development</div>
           <div class="domain-tag">Marketing</div>
@@ -116,25 +120,23 @@
           <div class="domain-tag">Events & Operations</div>
         </div>
 
-        <div style="margin-top:64px;" class="fade-up">
-          <div class="surface-card surface-panel">
-            <span class="section-label" style="color:var(--red);">Important</span>
-            <h3 style="font-size:22px; margin-bottom:12px;">This is not an internship.</h3>
-            <p style="font-size:15px; line-height:1.8;">GenZrix contributors are not interns filling their hours. You are a member of a professional execution team working on live client deliverables. The expectations are real, the work is real, and so is the recognition. We believe in rewarding performance, not attendance.</p>
-          </div>
+        <div class="careers-expectations fade-up fade-up-delay-2">
+          <span class="section-label">Important</span>
+          <h3>This is not an internship.</h3>
+          <p>GenZrix contributors are not interns filling their hours. You are a member of a professional execution team working on live client deliverables. The expectations are real, the work is real, and so is the recognition. We believe in rewarding performance, not attendance.</p>
         </div>
       </div>
     </section>
 
     <!-- APPLY FORM -->
-    <section class="form-section">
+    <section class="form-section careers-form" id="apply-section" aria-labelledby="careers-form-heading">
       <div class="container">
-        <div class="section-header fade-up" style="text-align:center; max-width:580px; margin:0 auto 48px;">
-          <span class="section-label" style="display:block;">Apply Now</span>
-          <h2>Ready to get started?</h2>
-          <p class="section-subtext" style="margin:16px auto 0;">Tell us who you are and what you're great at. Applications are reviewed on a rolling basis.</p>
+        <div class="careers-form__header fade-up">
+          <span class="section-label">Apply Now</span>
+          <h2 id="careers-form-heading">Ready to get started?</h2>
+          <p class="section-subtext">Tell us who you are and what you're great at. Applications are reviewed on a rolling basis.</p>
         </div>
-        <div class="form-wrapper fade-up fade-up-delay-1">
+        <div class="form-wrapper careers-form__wrapper fade-up fade-up-delay-1">
           <form id="application-form" novalidate>
             <div class="form-row">
               <div class="form-group">
@@ -147,7 +149,7 @@
               </div>
             </div>
             <div class="form-group">
-              <label>Domains of Interest <span style="font-weight:400; font-size:11px; color:var(--muted);">(select all that apply)</span></label>
+              <label>Domains of Interest <span class="careers-form__label-note">(select all that apply)</span></label>
               <div class="checkbox-group">
                 <label class="checkbox-item">
                   <input type="checkbox" name="domains" value="Design" />
@@ -194,10 +196,28 @@
               <label for="app-why">Why GenZrix?</label>
               <textarea id="app-why" name="why_genzrix" placeholder="Tell us why you want to join GenZrix and what you bring to the table. Keep it honest and specific." required></textarea>
             </div>
-            <button type="submit" class="btn-primary" style="width:100%; text-align:center; font-size:16px; padding:16px;">Apply Now</button>
+            <button type="submit" class="btn-primary careers-form__submit">Apply Now</button>
             <p id="application-status" class="form-status"></p>
           </form>
         </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="careers-cta" aria-labelledby="careers-cta-heading">
+      <div class="careers-cta__ambient" aria-hidden="true"></div>
+      <div class="careers-cta__spotlight" aria-hidden="true"></div>
+      <div class="careers-cta__particles" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="container careers-cta__inner">
+        <h2 id="careers-cta-heading" class="careers-cta__heading fade-up">
+          Your Skills Deserve<br>
+          <span class="careers-cta__accent">a Real Stage.</span>
+        </h2>
+        <p class="careers-cta__lead fade-up fade-up-delay-1">
+          Join a professional execution team where your work ships, your portfolio grows, and your contribution is verified.
+        </p>
       </div>
     </section>
 
@@ -216,7 +236,6 @@
           <nav class="footer-links">
             <a href="about.html">About Us</a>
             <a href="services.html">Services</a>
-            <a href="work.html">Our Work</a>
             <a href="careers.html">Careers</a>
             <a href="contact.html">Contact</a>
           </nav>

@@ -16,14 +16,6 @@ if (SUPABASE_URL && SUPABASE_ANON_KEY) {
 }
 
 
-/* ── Category SVG icons for portfolio cards ── */
-const categoryIcons = {
-  design: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="#4F7BFF" stroke-width="1.5"><rect x="6" y="8" width="36" height="28" rx="2"/><circle cx="16" cy="20" r="5"/><path d="M6 28 l10-8 8 7 6-5 12 10"/></svg>`,
-  development: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="#0EA5E9" stroke-width="1.5"><polyline points="18,36 6,24 18,12"/><polyline points="30,12 42,24 30,36"/><line x1="22" y1="36" x2="26" y2="12"/></svg>`,
-  marketing: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="#F97316" stroke-width="1.5"><path d="M6 36 L14 20 L22 28 L32 12 L42 18"/><circle cx="42" cy="18" r="3" fill="#F97316" stroke="none"/></svg>`,
-  events: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="#F59E0B" stroke-width="1.5"><rect x="6" y="10" width="36" height="28" rx="2"/><path d="M6 18 h36"/><circle cx="14" cy="14" r="2" fill="#F59E0B" stroke="none"/><circle cx="20" cy="14" r="2" fill="#F59E0B" stroke="none"/></svg>`,
-};
-
 document.addEventListener('DOMContentLoaded', () => {
 
   /* ── NAV SCROLL EFFECT ── */
@@ -577,18 +569,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  /* ── SKELETON LOADERS for portfolio ── */
-  function showSkeletons(container, count = 3) {
-    container.innerHTML = Array(count).fill('').map(() => `
-      <div class="skeleton-card">
-        <div class="skeleton skeleton-rect" style="margin-bottom:16px;"></div>
-        <div class="skeleton skeleton-title"></div>
-        <div class="skeleton skeleton-text"></div>
-        <div class="skeleton skeleton-text" style="width:70%;"></div>
-      </div>
-    `).join('');
-  }
-
   /* ── CONTACT FORM → Supabase ── */
   const contactForm = document.getElementById('contact-form');
   if (contactForm) {
@@ -655,6 +635,123 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /* ── CONTACT TIMELINE: What Happens Next ── */
+  const contactTimeline = document.querySelector('[data-contact-timeline]');
+  if (contactTimeline) {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const lineProgress = contactTimeline.querySelector('.contact-timeline__line-progress');
+    const nodes = [...contactTimeline.querySelectorAll('[data-contact-node]')];
+    const steps = [...contactTimeline.querySelectorAll('[data-contact-step]')];
+    let sequenceStarted = false;
+
+    const easeOutExpo = (t) => (t >= 1 ? 1 : 1 - (2 ** (-10 * t)));
+    const wait = (ms) => new Promise((resolve) => { setTimeout(resolve, ms); });
+    const isVertical = () => window.matchMedia('(max-width: 768px)').matches;
+    const lineProp = () => (isVertical() ? 'height' : 'width');
+
+    const getLineProgress = () => {
+      if (!lineProgress) return 0;
+      return parseFloat(lineProgress.style[lineProp()] || '0') || 0;
+    };
+
+    const animateLineTo = (targetPercent, duration) => new Promise((resolve) => {
+      if (!lineProgress) {
+        resolve();
+        return;
+      }
+
+      const prop = lineProp();
+      const startVal = getLineProgress();
+      const startAt = performance.now();
+
+      const tick = (now) => {
+        const progress = Math.min((now - startAt) / duration, 1);
+        const eased = easeOutExpo(progress);
+        const current = startVal + (targetPercent - startVal) * eased;
+        lineProgress.style[prop] = `${current}%`;
+
+        if (progress < 1) {
+          requestAnimationFrame(tick);
+        } else {
+          resolve();
+        }
+      };
+
+      requestAnimationFrame(tick);
+    });
+
+    const revealStep = async (index) => {
+      const step = steps[index];
+      if (!step) return;
+
+      step.classList.add('is-icon-in');
+      await wait(300);
+      step.classList.add('is-number-in');
+      await wait(240);
+      step.classList.add('is-title-in');
+      await wait(280);
+      step.classList.add('is-desc-in');
+      await wait(200);
+    };
+
+    const lightNode = (index) => {
+      if (nodes[index]) nodes[index].classList.add('is-lit');
+    };
+
+    const showAll = () => {
+      contactTimeline.classList.add('is-revealed', 'is-line-complete');
+      if (lineProgress) {
+        lineProgress.style[lineProp()] = '100%';
+      }
+      nodes.forEach((node) => node.classList.add('is-lit'));
+      steps.forEach((step) => {
+        step.classList.add('is-icon-in', 'is-number-in', 'is-title-in', 'is-desc-in');
+      });
+    };
+
+    const runTimelineSequence = async () => {
+      if (sequenceStarted) return;
+      sequenceStarted = true;
+      contactTimeline.classList.add('is-revealed');
+
+      if (reducedMotion) {
+        showAll();
+        return;
+      }
+
+      const milestones = [
+        { line: 14, node: null, step: 0 },
+        { line: 33, node: 0, step: null },
+        { line: 48, node: null, step: 1 },
+        { line: 66, node: 1, step: null },
+        { line: 81, node: null, step: 2 },
+        { line: 100, node: 2, step: null },
+        { line: 100, node: null, step: 3 },
+      ];
+
+      for (const milestone of milestones) {
+        if (milestone.line > getLineProgress()) {
+          await animateLineTo(milestone.line, milestone.line === 100 ? 520 : 460);
+        }
+        if (milestone.node !== null) lightNode(milestone.node);
+        if (milestone.step !== null) await revealStep(milestone.step);
+      }
+
+      contactTimeline.classList.add('is-line-complete');
+    };
+
+    const timelineObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          runTimelineSequence();
+          timelineObserver.unobserve(contactTimeline);
+        }
+      });
+    }, { threshold: 0.18, rootMargin: '0px 0px -40px 0px' });
+
+    timelineObserver.observe(contactTimeline);
+  }
+
   /* ── APPLICATION FORM → Supabase ── */
   const appForm = document.getElementById('application-form');
   if (appForm) {
@@ -708,70 +805,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { statusEl.className = 'form-status'; }, 8000);
       }
     });
-  }
-
-  /* ── LOAD PORTFOLIO FROM SUPABASE ── */
-  const portfolioGrid = document.getElementById('portfolio-grid');
-  if (portfolioGrid) {
-    showSkeletons(portfolioGrid, 6);
-    loadProjects();
-  }
-
-  async function loadProjects() {
-    const { data: projects, error } = await supabase
-      .from('projects')
-      .select('*')
-      .eq('is_published', true)
-      .order('sort_order', { ascending: true });
-
-    if (error || !projects || projects.length === 0) {
-      portfolioGrid.innerHTML = `
-        <div style="grid-column:1/-1; text-align:center; padding:80px 0;">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="rgba(11,31,75,0.2)" stroke-width="1.5" style="margin:0 auto 16px;">
-            <rect x="6" y="8" width="36" height="28" rx="2"/>
-            <circle cx="16" cy="20" r="5"/>
-            <path d="M6 28 l10-8 8 7 6-5 12 10"/>
-          </svg>
-          <p style="color:var(--muted); font-size:15px;">Projects will be showcased here as we complete them. Check back soon.</p>
-        </div>`;
-      return;
-    }
-
-    portfolioGrid.innerHTML = '';
-    projects.forEach((project, i) => {
-      const card = document.createElement('article');
-      card.className = 'portfolio-card fade-up';
-      card.dataset.category = project.category;
-      card.style.transitionDelay = `${(i % 3) * 0.1}s`;
-
-      const iconSvg = categoryIcons[project.category] || categoryIcons.design;
-      const imageContent = project.image_url
-        ? `<img src="${project.image_url}" alt="${project.title}" loading="lazy" />`
-        : `<div class="portfolio-img-placeholder">${iconSvg}</div>`;
-
-      const categoryLabel = project.category.charAt(0).toUpperCase() + project.category.slice(1);
-
-      card.innerHTML = `
-        <div class="portfolio-img">${imageContent}</div>
-        <div class="portfolio-info">
-          <span class="portfolio-tag">${categoryLabel}</span>
-          <h4>${project.title}</h4>
-          <p>${project.description}</p>
-        </div>
-      `;
-      portfolioGrid.appendChild(card);
-    });
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-    portfolioGrid.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
   }
 
   /* ── SERVICES SHOWCASE (scroll-driven) ── */
@@ -1463,32 +1496,5 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   })();
-
-  /* ── PORTFOLIO FILTER ── */
-  const filterBtns = document.querySelectorAll('.filter-btn');
-  if (filterBtns.length && portfolioGrid) {
-    filterBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        filterBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const filter = btn.dataset.filter;
-        portfolioGrid.querySelectorAll('.portfolio-card').forEach(card => {
-          const match = filter === 'all' || card.dataset.category === filter;
-          if (match) {
-            card.style.display = '';
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(14px)';
-            requestAnimationFrame(() => {
-              card.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
-              card.style.opacity = '1';
-              card.style.transform = 'translateY(0)';
-            });
-          } else {
-            card.style.display = 'none';
-          }
-        });
-      });
-    });
-  }
 
 });
