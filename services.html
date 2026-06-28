@@ -44,104 +44,160 @@
     </nav>
   </header>
 
-  <main>
+  <main class="services-page">
 
     <!-- HERO -->
-    <section class="inner-hero" style="text-align:center;">
-      <div class="container">
-        <span class="section-label fade-up" style="justify-content:center; display:block;">What We Do</span>
-        <h1 class="fade-up fade-up-delay-1">What We Do</h1>
-        <p class="fade-up fade-up-delay-2" style="margin: 0 auto; max-width:520px;">Starter packages and productized bundles for faster decisions and delivery.</p>
-        <p class="fade-up fade-up-delay-3" style="margin: 16px auto 0; max-width:520px;">
-          <a href="index.html#services-showcase" class="see-all-link">Explore our full service stack on the homepage →</a>
+    <section class="inner-hero services-page-hero" aria-labelledby="services-hero-heading">
+      <div class="container services-page-hero-inner">
+        <span class="section-label fade-up">What We Do</span>
+        <h1 id="services-hero-heading" class="fade-up fade-up-delay-1">
+          Complete Digital Solutions. Built for <span class="hero-accent">Growth.</span>
+        </h1>
+        <p class="services-page-hero-lead fade-up fade-up-delay-2">
+          From design and development to marketing and content — we deliver end-to-end solutions that help businesses grow faster with one unified execution team.
         </p>
+        <ul class="services-page-trust fade-up fade-up-delay-3" aria-label="Service highlights">
+          <li class="services-page-trust-item">
+            <span class="services-page-trust-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            </span>
+            <span>8 Core Services</span>
+          </li>
+          <li class="services-page-trust-item">
+            <span class="services-page-trust-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+            </span>
+            <span>End-to-End Delivery</span>
+          </li>
+          <li class="services-page-trust-item">
+            <span class="services-page-trust-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 18V6"/><path d="M4 18h16"/><path d="M8 14l3-3 3 2 4-5"/></svg>
+            </span>
+            <span>Scalable Solutions</span>
+          </li>
+          <li class="services-page-trust-item">
+            <span class="services-page-trust-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/></svg>
+            </span>
+            <span>Result Driven</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CORE SERVICES -->
+    <section class="services-page-catalog" aria-labelledby="services-core-heading">
+      <div class="container">
+        <div class="services-page-catalog-header fade-up">
+          <span class="section-label">Our Core Services</span>
+          <h2 id="services-core-heading"><span class="services-page-catalog-dash" aria-hidden="true">—</span> Everything We Do</h2>
+          <p class="section-subtext">From UI/UX to marketing and development — every service designed to help your business grow.</p>
+        </div>
+        <div class="svc-catalog" data-svc-catalog aria-busy="true"></div>
       </div>
     </section>
 
     <!-- PACKAGES -->
-    <section class="section-white">
+    <section class="services-packages section-white" aria-labelledby="services-packages-heading">
       <div class="container">
-        <div class="section-header fade-up" style="text-align:center; max-width:600px; margin:0 auto 0;">
-          <span class="section-label" style="display:block;">Packages</span>
-          <h2>Starter Packages</h2>
-          <p class="section-subtext" style="margin:16px auto 0;">Productized bundles for faster decisions and faster delivery.</p>
+        <div class="services-packages__header fade-up">
+          <span class="section-label">Packages</span>
+          <h2 id="services-packages-heading">Starter Packages</h2>
+          <p class="section-subtext">Productized bundles for faster decisions and faster delivery.</p>
         </div>
-        <div class="packages-grid" style="margin-top:64px;">
-          <div class="package-card fade-up fade-up-delay-1">
-            <span class="section-label" style="color:var(--red);">Starter</span>
+        <div class="packages-grid services-packages__grid">
+          <div class="package-card services-packages__card fade-up fade-up-delay-1">
+            <span class="services-packages__tier section-label">Starter</span>
             <h3>Starter Pack</h3>
             <p class="package-tagline">Everything you need to launch your brand.</p>
-            <hr class="divider" style="margin:20px 0;" />
-            <ul style="display:flex; flex-direction:column; gap:10px;">
-              <li style="font-size:14px; color:var(--muted); padding-left:16px; position:relative;">
-                <span style="position:absolute;left:0;top:9px;width:6px;height:1.5px;background:var(--red);display:block;"></span>
-                Logo design & brand identity
-              </li>
-              <li style="font-size:14px; color:var(--muted); padding-left:16px; position:relative;">
-                <span style="position:absolute;left:0;top:9px;width:6px;height:1.5px;background:var(--red);display:block;"></span>
-                Complete brand kit and guidelines
-              </li>
-              <li style="font-size:14px; color:var(--muted); padding-left:16px; position:relative;">
-                <span style="position:absolute;left:0;top:9px;width:6px;height:1.5px;background:var(--red);display:block;"></span>
-                5-page responsive website
-              </li>
+            <hr class="services-packages__divider" />
+            <ul class="services-packages__list">
+              <li>Logo design &amp; brand identity</li>
+              <li>Complete brand kit and guidelines</li>
+              <li>5-page responsive website</li>
             </ul>
-            <a href="contact.html" class="btn-primary">Get a Quote</a>
+            <a href="contact.html" class="btn-primary services-packages__cta">Get a Quote</a>
           </div>
 
-          <div class="package-card fade-up fade-up-delay-2" style="border-top: 3px solid var(--navy);">
-            <span class="section-label" style="color:var(--red);">Growth</span>
+          <div class="package-card services-packages__card package-card--featured fade-up fade-up-delay-2">
+            <span class="services-packages__badge">Most Popular</span>
+            <span class="services-packages__tier section-label">Growth</span>
             <h3>Growth Pack</h3>
             <p class="package-tagline">Designed for businesses ready to scale online.</p>
-            <hr class="divider" style="margin:20px 0;" />
-            <ul style="display:flex; flex-direction:column; gap:10px;">
-              <li style="font-size:14px; color:var(--muted); padding-left:16px; position:relative;">
-                <span style="position:absolute;left:0;top:9px;width:6px;height:1.5px;background:var(--red);display:block;"></span>
-                Full website design and development
-              </li>
-              <li style="font-size:14px; color:var(--muted); padding-left:16px; position:relative;">
-                <span style="position:absolute;left:0;top:9px;width:6px;height:1.5px;background:var(--red);display:block;"></span>
-                Technical SEO setup and on-page optimization
-              </li>
-              <li style="font-size:14px; color:var(--muted); padding-left:16px; position:relative;">
-                <span style="position:absolute;left:0;top:9px;width:6px;height:1.5px;background:var(--red);display:block;"></span>
-                1-month social media management
-              </li>
+            <hr class="services-packages__divider" />
+            <ul class="services-packages__list">
+              <li>Full website design and development</li>
+              <li>Technical SEO setup and on-page optimization</li>
+              <li>1-month social media management</li>
             </ul>
-            <a href="contact.html" class="btn-primary">Get a Quote</a>
+            <a href="contact.html" class="btn-primary services-packages__cta">Get a Quote</a>
           </div>
 
-          <div class="package-card fade-up fade-up-delay-3">
-            <span class="section-label" style="color:var(--red);">Scale</span>
+          <div class="package-card services-packages__card fade-up fade-up-delay-3">
+            <span class="services-packages__tier section-label">Scale</span>
             <h3>Scale Pack</h3>
             <p class="package-tagline">Built for founders shipping their next product.</p>
-            <hr class="divider" style="margin:20px 0;" />
-            <ul style="display:flex; flex-direction:column; gap:10px;">
-              <li style="font-size:14px; color:var(--muted); padding-left:16px; position:relative;">
-                <span style="position:absolute;left:0;top:9px;width:6px;height:1.5px;background:var(--red);display:block;"></span>
-                App MVP design and development
-              </li>
-              <li style="font-size:14px; color:var(--muted); padding-left:16px; position:relative;">
-                <span style="position:absolute;left:0;top:9px;width:6px;height:1.5px;background:var(--red);display:block;"></span>
-                End-to-end UI/UX design system
-              </li>
-              <li style="font-size:14px; color:var(--muted); padding-left:16px; position:relative;">
-                <span style="position:absolute;left:0;top:9px;width:6px;height:1.5px;background:var(--red);display:block;"></span>
-                Analytics integration and performance dashboard
-              </li>
+            <hr class="services-packages__divider" />
+            <ul class="services-packages__list">
+              <li>App MVP design and development</li>
+              <li>End-to-end UI/UX design system</li>
+              <li>Analytics integration and performance dashboard</li>
             </ul>
-            <a href="contact.html" class="btn-primary">Get a Quote</a>
+            <a href="contact.html" class="btn-primary services-packages__cta">Get a Quote</a>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- CTA BANNER -->
-    <section class="join-banner">
-      <div class="container">
-        <h2 class="fade-up" style="margin-bottom:20px;">Ready to get started?</h2>
-        <p class="fade-up fade-up-delay-1">Tell us what you need. We'll put together the right team and the right plan.</p>
-        <a href="contact.html" class="btn-white fade-up fade-up-delay-2" style="margin-top:8px;">Work With Us</a>
+    <!-- CTA -->
+    <section class="services-cta" aria-labelledby="services-cta-heading">
+      <div class="services-cta__ambient" aria-hidden="true"></div>
+      <div class="services-cta__spotlight" aria-hidden="true"></div>
+      <div class="services-cta__particles" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="container services-cta__inner">
+        <h2 id="services-cta-heading" class="services-cta__heading fade-up">
+          Let's Build Something<br>
+          <span class="services-cta__accent">Extraordinary.</span>
+        </h2>
+        <p class="services-cta__lead fade-up fade-up-delay-1">
+          Tell us your vision. We'll assemble the right team, strategy, and execution to transform your ideas into meaningful digital experiences and measurable business growth.
+        </p>
+        <div class="services-cta__pills fade-up fade-up-delay-2" role="presentation" aria-hidden="true">
+          <span class="services-cta__pill">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><polyline points="8,10 4,14 8,18"/><polyline points="16,10 20,14 16,18"/><line x1="10" y1="17" x2="14" y2="11"/></svg>
+            Website Development
+          </span>
+          <span class="services-cta__pill">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+            App Development
+          </span>
+          <span class="services-cta__pill">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l2.5 7.5H22l-6 4.5 2.5 7.5-6.5-4.5-6.5 4.5 2.5-7.5-6-4.5h7.5z"/></svg>
+            Creative Design
+          </span>
+          <span class="services-cta__pill">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 18V6"/><path d="M4 18h16"/><path d="M8 14l3-3 3 2 4-5"/></svg>
+            Digital Marketing
+          </span>
+          <span class="services-cta__pill">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.5 13h11l3-8H6"/></svg>
+            E-Commerce
+          </span>
+          <span class="services-cta__pill">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Content Production
+          </span>
+          <span class="services-cta__pill">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Event Execution
+          </span>
+        </div>
+        <div class="services-cta__actions fade-up fade-up-delay-4">
+          <a href="contact.html" class="services-cta__btn services-cta__btn--primary">Start Your Project →</a>
+          <a href="contact.html" class="services-cta__btn services-cta__btn--secondary">Schedule a Call</a>
+        </div>
       </div>
     </section>
 
