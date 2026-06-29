@@ -822,9 +822,18 @@ document.addEventListener('DOMContentLoaded', () => {
     let scrollTicking = false;
     const DURATION = 550;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const STEP_VH = reducedMotion ? 0.5 : 1;
 
-    const getStepHeight = () => window.innerHeight * STEP_VH;
+    const getStepVh = () => {
+      const w = window.innerWidth;
+      let deviceMultiplier = 0.875; /* desktop: ~12.5% less scroll per card */
+      if (w <= 768) deviceMultiplier = 0.50; /* mobile: ~50% less scroll per card */
+      else if (w <= 1024) deviceMultiplier = 0.75; /* tablet: ~25% less scroll per card */
+
+      const base = reducedMotion ? 0.5 : 1;
+      return base * deviceMultiplier;
+    };
+
+    const getStepHeight = () => window.innerHeight * getStepVh();
 
     const syncPanelHeight = () => {
       const maxHeight = panels.reduce((max, panel) => Math.max(max, panel.offsetHeight), 380);
