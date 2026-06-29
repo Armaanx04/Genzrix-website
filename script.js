@@ -1143,7 +1143,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const onScroll = () => {
       if (scrollTicking) return;
       scrollTicking = true;
-      requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
         const scrolled = Math.max(0, window.scrollY - getRootTop());
         const cardPhaseEnd = getCardPhaseEnd();
         const holdEnd = getHoldEnd();
@@ -1237,7 +1237,7 @@ document.addEventListener('DOMContentLoaded', () => {
         base = { r: 217, g: 217, b: 221 }; // Satin silver #D9D9DD
       } else if (roll < 0.90) {
         base = { r: 184, g: 186, b: 194 }; // Brushed mid-tone #B8BAC2
-      } else {
+          } else {
         base = { r: 142, g: 145, b: 155 }; // Gunmetal shadow #8E919B
       }
 

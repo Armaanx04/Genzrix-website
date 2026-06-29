@@ -94,7 +94,7 @@ export const SERVICES = [
       'We develop web and mobile applications that are robust, scalable, and genuinely enjoyable to use. From MVP to full-featured product — we ship code that works, on time.',
     includes: [
       'React / Next.js web applications',
-      'React Native mobile apps (iOS & Android)',
+      'Cross-platform apps (Flutter, React Native)',
       'API design and backend integration',
       'QA testing, launch support, and documentation',
     ],
