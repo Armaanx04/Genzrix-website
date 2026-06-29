@@ -824,14 +824,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     /*
-     * Fixed scroll distance per card — tuned to real input, not viewport ratios.
-     * Desktop ~100px per wheel notch → 200px ≈ 2 notches per card.
-     * Mobile ~85px per thumb swipe → 170px ≈ 2 swipes per card.
+     * Fixed pixels per card — mapped 1:1 to window.scrollY through the track.
+     * Desktop ~75px per wheel notch × 2 ≈ 150px.
+     * Mobile ~60px per thumb swipe × 2 ≈ 120px.
      */
     const STEP_PX = {
-      desktop: 200,
-      tablet: 185,
-      mobile: 170,
+      desktop: 150,
+      tablet: 140,
+      mobile: 120,
     };
 
     const getStepHeight = () => {
@@ -844,16 +844,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const isMobilePacing = () => window.innerWidth <= 768;
 
-    const getRootTop = () => scrollRoot.getBoundingClientRect().top + window.scrollY;
-
     const getScrollDistance = () => Math.max(0, (panels.length - 1) * getStepHeight());
 
+    const measureTrack = () => {
+      const pinHeight = pinEl.offsetHeight;
+      const scrollDistance = getScrollDistance();
+      const runway = Math.max(pinHeight, window.innerHeight);
+      scrollRoot.style.height = `${runway + scrollDistance}px`;
+    };
+
+    const getScrolledInTrack = () => Math.max(0, window.scrollY - scrollRoot.offsetTop);
+
     const getIndexFromScroll = () => {
-      const scrolled = window.scrollY - getRootTop();
+      const scrolled = getScrolledInTrack();
       const stepHeight = getStepHeight();
       const maxIndex = panels.length - 1;
 
-      if (scrolled <= 0) return 0;
+      if (stepHeight <= 0) return 0;
       if (scrolled >= maxIndex * stepHeight) return maxIndex;
       return Math.min(maxIndex, Math.floor(scrolled / stepHeight));
     };
@@ -867,9 +874,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const updateScrollHeight = () => {
       syncPanelHeight();
-      const pinHeight = pinEl.offsetHeight;
-      const scrollDistance = Math.max(0, getScrollDistance());
-      scrollRoot.style.height = `${pinHeight + scrollDistance}px`;
+      measureTrack();
     };
 
     const activateTab = (index) => {
@@ -942,9 +947,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const scrollToIndex = (index) => {
-      const rootTop = getRootTop();
       const stepHeight = getStepHeight();
-      const targetY = rootTop + index * stepHeight + stepHeight * 0.15;
+      const targetY = scrollRoot.offsetTop + index * stepHeight + stepHeight * 0.1;
       window.scrollTo({ top: targetY, behavior: 'smooth' });
     };
 
