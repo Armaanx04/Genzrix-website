@@ -823,25 +823,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const DURATION = 550;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    /* Viewport-height fraction per card step (original was 1.0) */
-    const STEP_VH = {
-      desktop: 0.52, /* ~48% less scroll than original — ~3–4 wheel notches */
-      tablet: 0.40,  /* slightly snappier than desktop */
-      mobile: 0.18,  /* ~2 thumb swipes on a typical phone */
+    /*
+     * Fixed scroll distance per card — tuned to real input, not viewport ratios.
+     * Desktop ~100px per wheel notch → 200px ≈ 2 notches per card.
+     * Mobile ~85px per thumb swipe → 170px ≈ 2 swipes per card.
+     */
+    const STEP_PX = {
+      desktop: 200,
+      tablet: 185,
+      mobile: 170,
     };
 
-    const getStepVh = () => {
+    const getStepHeight = () => {
       const w = window.innerWidth;
-      let vh = STEP_VH.desktop;
-      if (w <= 768) vh = STEP_VH.mobile;
-      else if (w <= 1024) vh = STEP_VH.tablet;
-      if (reducedMotion) vh *= 0.5;
-      return vh;
+      let px = STEP_PX.desktop;
+      if (w <= 768) px = STEP_PX.mobile;
+      else if (w <= 1024) px = STEP_PX.tablet;
+      return reducedMotion ? Math.round(px * 0.6) : px;
     };
 
     const isMobilePacing = () => window.innerWidth <= 768;
-
-    const getStepHeight = () => window.innerHeight * getStepVh();
 
     const getRootTop = () => scrollRoot.getBoundingClientRect().top + window.scrollY;
 
