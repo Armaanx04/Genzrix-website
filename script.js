@@ -826,7 +826,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const getStepVh = () => {
       const w = window.innerWidth;
       let deviceMultiplier = 0.875; /* desktop: ~12.5% less scroll per card */
-      if (w <= 768) deviceMultiplier = 0.30; /* mobile: ~2–3 swipes per card */
+      if (w <= 768) deviceMultiplier = 0.24; /* mobile: ~2–3 swipes per card */
       else if (w <= 1024) deviceMultiplier = 0.75; /* tablet: ~25% less scroll per card */
 
       const base = reducedMotion ? 0.5 : 1;
@@ -837,7 +837,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const getStepHeight = () => window.innerHeight * getStepVh();
 
-    const getMobileFirstStepHeight = () => getStepHeight() * 0.72; /* ~28% shorter first transition */
+    const getMobileFirstStepHeight = () => getStepHeight() * 0.65; /* shorter first transition on mobile */
 
     const getRootTop = () => {
       let top = scrollRoot.getBoundingClientRect().top + window.scrollY;
@@ -845,7 +845,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const headerBlock = scrollRoot.previousElementSibling;
         if (headerBlock) {
           /* Credit header scroll so the first card engages sooner on mobile */
-          top -= headerBlock.offsetHeight * 0.28;
+          top -= headerBlock.offsetHeight * 0.38;
         }
       }
       return top;
@@ -887,7 +887,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const syncPanelHeight = () => {
       const maxHeight = panels.reduce((max, panel) => Math.max(max, panel.offsetHeight), 380);
-      panelsWrap.style.minHeight = `${maxHeight + 72}px`;
+      const buffer = isMobilePacing() ? 12 : 72;
+      const minBase = isMobilePacing() ? 0 : 380;
+      panelsWrap.style.minHeight = `${Math.max(minBase, maxHeight) + buffer}px`;
     };
 
     const updateScrollHeight = () => {

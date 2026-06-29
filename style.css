@@ -9289,7 +9289,7 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 48px;
+    gap: 36px;
   }
 
   .hero-left {
@@ -9332,7 +9332,15 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   }
 
   .hero-diagram {
-    max-width: min(360px, 100%);
+    max-width: min(440px, 94vw);
+  }
+
+  .hero-hub-glow {
+    width: min(84%, 360px);
+  }
+
+  .hero-diagram-caption {
+    margin-top: 6px;
   }
 
   .hero-bg-glow--diagram {
@@ -9366,24 +9374,92 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   .pillar-item   { padding: 32px 20px; }
   .why-grid      { grid-template-columns: 1fr 1fr; }
 
+  .ds-section--services.services-showcase-section,
+  .services-showcase-section {
+    padding-top: 56px;
+  }
+
+  .services-showcase-header {
+    margin-bottom: 24px;
+  }
+
   .services-showcase-pin {
-    top: 80px;
-    padding-bottom: 32px;
+    top: 72px;
+    padding-bottom: 12px;
+  }
+
+  .services-showcase-tabs-wrap {
+    margin-bottom: 10px;
+  }
+
+  .services-showcase-card-top {
+    padding: 10px 16px 0;
   }
 
   .services-showcase-list { grid-template-columns: 1fr; }
-  .services-showcase-panels { padding: 20px 20px 28px; min-height: 360px; }
-  .services-showcase-panel { top: 20px; left: 20px; right: 20px; }
+  .services-showcase-panels {
+    padding: 12px 16px 14px;
+    min-height: 0;
+  }
+  .services-showcase-panel {
+    top: 12px;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    flex-direction: column;
+  }
   .services-showcase-panel-inner { max-width: 100%; }
-  .services-showcase-visual { display: none; }
+  .services-showcase-visual {
+    display: flex;
+    position: relative;
+    right: auto;
+    top: auto;
+    width: 100%;
+    height: clamp(196px, 44vw, 248px);
+    margin: 0 0 6px;
+    opacity: 0;
+    transform: none;
+    flex-shrink: 0;
+    filter: drop-shadow(0 6px 18px rgba(var(--showcase-accent-rgb), 0.05));
+  }
+  .services-showcase-panel.is-active .services-showcase-visual {
+    opacity: 1;
+    transform: none;
+  }
+  .services-showcase-panel.is-exiting .services-showcase-visual {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  .services-showcase-panel .showcase-sculpture {
+    width: 86%;
+    height: 86%;
+    transform: scale(1.24);
+    transform-origin: center center;
+  }
+  .services-showcase-panel .showcase-visual-glow {
+    width: 196%;
+    height: 196%;
+  }
   .services-showcase-emboss-num {
     left: auto;
-    right: 20px;
-    top: 16px;
-    font-size: clamp(48px, 12.6vw, 67px);
+    right: 12px;
+    top: 6px;
+    font-size: clamp(40px, 11vw, 54px);
     text-align: right;
   }
-  .services-showcase-card-top { padding: 16px 20px 0; }
+  .services-showcase-desc {
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+
+  .services-showcase-includes {
+    margin-bottom: 8px;
+  }
+
+  .services-showcase-cta {
+    margin-top: 4px;
+  }
+
   .services-showcase-tab { min-width: 76px; padding: 12px 10px 10px; }
   .services-showcase-tab-label { font-size: 10px; }
   .packages-grid      { grid-template-columns: 1fr; }
@@ -9458,7 +9534,7 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   }
 
   .hero-diagram {
-    max-width: 280px;
+    max-width: min(360px, 94vw);
   }
 }
 
@@ -9469,10 +9545,10 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   .nav-inner { padding: 0 16px; }
   .container { padding: 0 16px; }
   .hero { padding: calc(60px + 24px) 16px 48px; }
-  .services-showcase-section { padding-top: 64px; }
-  .services-showcase-header { margin-bottom: 32px; }
+  .services-showcase-section { padding-top: 48px; }
+  .services-showcase-header { margin-bottom: 20px; }
   .services-showcase-panel-head { flex-direction: column; align-items: flex-start; gap: 12px; }
-  .services-showcase-desc { font-size: 14px; margin-bottom: 22px; }
+  .services-showcase-desc { font-size: 14px; margin-bottom: 14px; }
   .services-showcase-tabs-wrap::before,
   .services-showcase-tabs-wrap::after { width: 20px; }
   .pillar-item { padding: 24px 16px; }
@@ -9487,7 +9563,7 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   }
 
   .hero-diagram {
-    max-width: 240px;
+    max-width: min(300px, 94vw);
   }
 }
 
