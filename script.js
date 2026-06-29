@@ -826,7 +826,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const getStepVh = () => {
       const w = window.innerWidth;
       let deviceMultiplier = 0.875; /* desktop: ~12.5% less scroll per card */
-      if (w <= 768) deviceMultiplier = 0.50; /* mobile: ~50% less scroll per card */
+      if (w <= 768) deviceMultiplier = 0.38; /* mobile: tighter scroll per card (~3–4 swipes) */
       else if (w <= 1024) deviceMultiplier = 0.75; /* tablet: ~25% less scroll per card */
 
       const base = reducedMotion ? 0.5 : 1;
