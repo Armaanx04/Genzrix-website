@@ -823,50 +823,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const DURATION = 550;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    /* Viewport-height fraction per card step (original was 1.0) */
+    const STEP_VH = {
+      desktop: 0.52, /* ~48% less scroll than original — ~3–4 wheel notches */
+      tablet: 0.40,  /* slightly snappier than desktop */
+      mobile: 0.18,  /* ~2 thumb swipes on a typical phone */
+    };
+
     const getStepVh = () => {
       const w = window.innerWidth;
-      let deviceMultiplier = 0.875; /* desktop: ~12.5% less scroll per card */
-      if (w <= 768) deviceMultiplier = 0.24; /* mobile: ~2–3 swipes per card */
-      else if (w <= 1024) deviceMultiplier = 0.75; /* tablet: ~25% less scroll per card */
-
-      const base = reducedMotion ? 0.5 : 1;
-      return base * deviceMultiplier;
+      let vh = STEP_VH.desktop;
+      if (w <= 768) vh = STEP_VH.mobile;
+      else if (w <= 1024) vh = STEP_VH.tablet;
+      if (reducedMotion) vh *= 0.5;
+      return vh;
     };
 
     const isMobilePacing = () => window.innerWidth <= 768;
 
     const getStepHeight = () => window.innerHeight * getStepVh();
 
-    const getMobileFirstStepHeight = () => getStepHeight() * 0.65; /* shorter first transition on mobile */
+    const getRootTop = () => scrollRoot.getBoundingClientRect().top + window.scrollY;
 
-    const getRootTop = () => {
-      let top = scrollRoot.getBoundingClientRect().top + window.scrollY;
-      if (isMobilePacing()) {
-        const headerBlock = scrollRoot.previousElementSibling;
-        if (headerBlock) {
-          /* Credit header scroll so the first card engages sooner on mobile */
-          top -= headerBlock.offsetHeight * 0.38;
-        }
-      }
-      return top;
-    };
-
-    const getScrollDistance = () => {
-      const steps = panels.length - 1;
-      if (steps <= 0) return 0;
-      if (isMobilePacing()) {
-        return getMobileFirstStepHeight() + (steps - 1) * getStepHeight();
-      }
-      return steps * getStepHeight();
-    };
-
-    const getScrollPositionForIndex = (index) => {
-      if (index <= 0) return 0;
-      if (!isMobilePacing()) return index * getStepHeight();
-      const stepHeight = getStepHeight();
-      if (index === 1) return getMobileFirstStepHeight();
-      return getMobileFirstStepHeight() + (index - 1) * stepHeight;
-    };
+    const getScrollDistance = () => Math.max(0, (panels.length - 1) * getStepHeight());
 
     const getIndexFromScroll = () => {
       const scrolled = window.scrollY - getRootTop();
@@ -874,13 +853,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const maxIndex = panels.length - 1;
 
       if (scrolled <= 0) return 0;
-      if (isMobilePacing()) {
-        const firstStep = getMobileFirstStepHeight();
-        if (scrolled < firstStep) return 0;
-        if (scrolled >= getScrollDistance()) return maxIndex;
-        return Math.min(maxIndex, 1 + Math.floor((scrolled - firstStep) / stepHeight));
-      }
-
       if (scrolled >= maxIndex * stepHeight) return maxIndex;
       return Math.min(maxIndex, Math.floor(scrolled / stepHeight));
     };
@@ -971,8 +943,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const scrollToIndex = (index) => {
       const rootTop = getRootTop();
       const stepHeight = getStepHeight();
-      const position = getScrollPositionForIndex(index);
-      const targetY = rootTop + position + stepHeight * 0.15;
+      const targetY = rootTop + index * stepHeight + stepHeight * 0.15;
       window.scrollTo({ top: targetY, behavior: 'smooth' });
     };
 
