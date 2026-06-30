@@ -1,0 +1,45 @@
+---
+description: Frozen visual baseline for the Why GenZrix Execution Layer stack — do not alter styling
+globs: index.html,style.css,script.js
+alwaysApply: false
+---
+
+# Execution Layer visual freeze (Why GenZrix)
+
+**Naming:** User-facing "Execution Layer" = homepage **Why GenZrix** section (`about-why-section.why-genzrix`). This is **not** the Services Showcase carousel (`initServicesShowcase` / `services-showcase.html`).
+
+**Status:** Visual design is **locked** (June 2026). Summary stack (`.is-compact`) is the reference implementation.
+
+## Do not modify (visual)
+
+Unless the user explicitly requests a visual redesign:
+
+- Active / inactive stacked card appearance, glassmorphism, metal surfaces
+- Border radius, shadows, blur, background gradients, card dimensions
+- Stack depth, card offsets, spacing, layout grid (logo | headline | stack)
+- Icon styling: static dark navy gradient `#2E4058 → #20222C`, accent icon color `var(--ds-accent)`
+- Typography: heading sizes, description styling, left badge/ring, headline
+- Summary morph / compact row styling (`.is-compact`, `.is-morph-layout`)
+- Responsive breakpoints for this section
+- CSS transitions on colors, backgrounds, shadows, glass effects in this section
+
+## Allowed changes (functional only)
+
+- Scroll progression, pacing, thresholds, pin distance in `initWhyGenzrixStack()`
+- Transform / opacity / z-index driven per frame by scroll (not CSS color transitions)
+- Content text updates in `index.html` (copy only — no markup/class changes)
+- Bug fixes that restore the frozen baseline (not redesign)
+
+## Key files & selectors
+
+| Asset | Location |
+|-------|----------|
+| Markup | `index.html` — `[data-why-stack-scroll]`, `[data-why-stack]`, `[data-why-card]` |
+| Visual CSS | `style.css` — `.why-genzrix-*`, `.ds-section--about .why-genzrix-*`, `.why-genzrix-stack-card.is-compact` |
+| Interaction JS | `script.js` — `initWhyGenzrixStack()` (logic only; no new inline visual styles) |
+
+## When visual change is unavoidable
+
+1. Match existing summary stack (`.is-compact`) tokens: `--metal-*`, `--surface-*`, icon gradient above
+2. Change the smallest possible rule; do not refactor unrelated styles
+3. State explicitly that the user approved a visual exception

@@ -15,6 +15,485 @@ if (SUPABASE_URL && SUPABASE_ANON_KEY) {
   supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
+/* Execution Layer stack — FUNCTIONAL ONLY (scroll/pin/morph logic).
+   Visual baseline frozen; see .cursor/rules/execution-layer-visual-freeze.mdc */
+function initWhyGenzrixStack() {
+  const scrollRoot = document.querySelector('[data-why-stack-scroll]');
+  if (!scrollRoot) return;
+
+  const pinEl = scrollRoot.querySelector('.why-genzrix-pin');
+  const stackEl = scrollRoot.querySelector('[data-why-stack]');
+  const cards = [...scrollRoot.querySelectorAll('[data-why-card]')];
+  if (!pinEl || !stackEl || cards.length < 2) return;
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const transitionWeight = 0.88;
+
+  /*
+   * Card-step pacing (calibrated, pin-relative px — not viewport-multiplied).
+   * Measured: ~103px pin-progress per 100px wheel delta (Chromium 1280×900).
+   * transitionWeight is the 1→2 / summary reference — one px unit for every segment.
+   */
+  const PACING = {
+    measuredPinPxPerWheel: 103,
+    baseDetents: { desktop: 2.5, tablet: 2.75, mobile: 2 },
+    transitionWeight,
+    cardStepWeights: [transitionWeight, transitionWeight, transitionWeight],
+    readPlateauWeights: [transitionWeight, transitionWeight],
+    holdVh: reducedMotion ? 0.5 : 1,
+    summaryWeight: transitionWeight,
+  };
+
+  const ROW_HEIGHT = 122;
+  const ROW_GAP = 18;
+  const INACTIVE_SCALE_Y = 1 / 1.2;
+  let scrollTicking = false;
+  let stackBaseHeight = 0;
+
+  const easeOutCubic = (t) => 1 - (1 - t) ** 3;
+  const easeInOutCubic = (t) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const smoothstep = (edge0, edge1, x) => {
+    const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
+    return t * t * (3 - 2 * t);
+  };
+
+  const getStickyTop = () => {
+    const top = parseFloat(getComputedStyle(pinEl).top);
+    return Number.isFinite(top) ? top : 84;
+  };
+
+  /** Pin-relative scroll progress (0 when sticky engages). */
+  const getRawScrollProgress = () =>
+    Math.max(0, getStickyTop() - scrollRoot.getBoundingClientRect().top);
+
+  const getBaseStepPx = () => {
+    const w = window.innerWidth;
+    let detents = PACING.baseDetents.desktop;
+    if (w <= 768) detents = PACING.baseDetents.mobile;
+    else if (w <= 1024) detents = PACING.baseDetents.tablet;
+
+    const mobilePx = Math.round(90 * PACING.baseDetents.mobile);
+    let px = Math.round(PACING.measuredPinPxPerWheel * detents);
+    if (w <= 768) px = mobilePx;
+
+    return reducedMotion ? Math.round(px * 0.65) : px;
+  };
+
+  const getTransitionStepPx = () => Math.round(getBaseStepPx() * PACING.transitionWeight);
+
+  /** Pin-progress px for each stack transition (length = cards.length - 1). */
+  const getCardStepPx = () => {
+    const stepPx = getTransitionStepPx();
+    return PACING.cardStepWeights.map(() => stepPx);
+  };
+
+  /** Reading plateaus after cards 2 & 3 — same px unit as 1→2 (mirrors card-4 hold + summary rhythm). */
+  const getReadPlateauPx = () => {
+    const plateauPx = getTransitionStepPx();
+    return PACING.readPlateauWeights.map(() => plateauPx);
+  };
+
+  const getCardSegments = () => {
+    const steps = getCardStepPx();
+    const plateaus = getReadPlateauPx();
+    const segments = [];
+
+    for (let i = 0; i < steps.length; i++) {
+      segments.push({
+        kind: 'transition',
+        fromFront: i,
+        toFront: i + 1,
+        length: steps[i],
+      });
+      if (i < plateaus.length) {
+        segments.push({
+          kind: 'plateau',
+          front: i + 1,
+          length: plateaus[i],
+        });
+      }
+    }
+
+    return segments;
+  };
+
+  const progression = {
+    getCardStepPx,
+    getReadPlateauPx,
+    getCardSegments,
+    getCardPhaseEnd() {
+      return getCardSegments().reduce((sum, segment) => sum + segment.length, 0);
+    },
+    getHoldHeight() {
+      return window.innerHeight * PACING.holdVh;
+    },
+    getSummaryHeight() {
+      return getTransitionStepPx();
+    },
+    getHoldEnd() {
+      return this.getCardPhaseEnd() + this.getHoldHeight();
+    },
+    getScrollDistance() {
+      return this.getHoldEnd() + this.getSummaryHeight();
+    },
+    progressToFront(scrolled) {
+      if (scrolled <= 0) return 0;
+
+      const segments = getCardSegments();
+      const maxFront = cards.length - 1;
+      let accumulated = 0;
+
+      for (const segment of segments) {
+        if (segment.length <= 0) continue;
+        if (scrolled < accumulated + segment.length) {
+          if (segment.kind === 'plateau') {
+            return Math.min(maxFront, segment.front);
+          }
+          const t = (scrolled - accumulated) / segment.length;
+          return Math.min(maxFront, segment.fromFront + t * (segment.toFront - segment.fromFront));
+        }
+        accumulated += segment.length;
+      }
+
+      return maxFront;
+    },
+  };
+
+  const getHoldHeight = () => progression.getHoldHeight();
+  const getSummaryHeight = () => progression.getSummaryHeight();
+  const getCardHeight = () => cards[0]?.offsetHeight || stackEl.offsetHeight;
+  const getPeekPx = () => Math.max(48, getCardHeight() * 0.22);
+  const getStackBaseHeight = () => {
+    const parsed = parseFloat(getComputedStyle(stackEl).height);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : stackEl.offsetHeight;
+  };
+  const getSummaryListHeight = () => cards.length * ROW_HEIGHT + (cards.length - 1) * ROW_GAP;
+
+  const getCardPhaseEnd = () => progression.getCardPhaseEnd();
+  const getHoldEnd = () => progression.getHoldEnd();
+  const getScrollDistance = () => progression.getScrollDistance();
+
+  const getFrontFromScroll = (scrolled) => progression.progressToFront(scrolled);
+
+  /** Transition lifecycle: idle → anticipate → follow (scroll-driven, no bolted delays). */
+  const ANTICIPATE_MS = 100;
+  const REST_EPS = 0.004;
+  const REST_EXIT_EPS = 0.003;
+  const ANTICIPATE_FAST_SCROLL = 0.14;
+  let motionRafId = null;
+
+  const stackMotion = {
+    phase: 'idle',
+    lastRestFront: 0,
+    anchorFront: 0,
+    anticipateStart: 0,
+    prevTargetFront: 0,
+  };
+
+  const applyAnticipationPrep = (state, prepT, rel) => {
+    const t = prepT * prepT;
+    const compress = 1 - 0.005 * t;
+    const yTighten = 1 - 0.028 * t;
+    if (rel >= 0) {
+      state.translateY *= yTighten;
+    } else if (rel > -1) {
+      state.translateY *= 1 - 0.018 * t;
+    }
+    state.scaleX *= compress;
+    state.scaleY *= compress;
+    return state;
+  };
+
+  const resolveStackFront = (targetFront, timestamp) => {
+    if (reducedMotion) {
+      return { front: targetFront, prepT: 0 };
+    }
+
+    if (stackMotion.phase === 'anticipate') {
+      const elapsed = timestamp - stackMotion.anticipateStart;
+      const prepT = Math.min(1, elapsed / ANTICIPATE_MS);
+
+      if (targetFront < stackMotion.anchorFront + REST_EXIT_EPS) {
+        stackMotion.phase = 'idle';
+        stackMotion.prevTargetFront = targetFront;
+        return { front: targetFront, prepT: 0 };
+      }
+
+      if (elapsed >= ANTICIPATE_MS || targetFront > stackMotion.anchorFront + ANTICIPATE_FAST_SCROLL) {
+        stackMotion.phase = 'idle';
+        stackMotion.prevTargetFront = targetFront;
+        return { front: targetFront, prepT: 0 };
+      }
+
+      return { front: stackMotion.anchorFront, prepT };
+    }
+
+    const restIndex = Math.round(targetFront);
+    if (Math.abs(targetFront - restIndex) < REST_EPS) {
+      stackMotion.lastRestFront = restIndex;
+    }
+
+    const wasNearRest = Math.abs(stackMotion.prevTargetFront - stackMotion.lastRestFront) < REST_EPS * 2
+      && stackMotion.prevTargetFront <= stackMotion.lastRestFront + REST_EPS;
+
+    if (wasNearRest && targetFront > stackMotion.lastRestFront + REST_EXIT_EPS) {
+      stackMotion.phase = 'anticipate';
+      stackMotion.anchorFront = stackMotion.lastRestFront;
+      stackMotion.anticipateStart = timestamp;
+      stackMotion.prevTargetFront = targetFront;
+      return { front: stackMotion.anchorFront, prepT: 0 };
+    }
+
+    stackMotion.prevTargetFront = targetFront;
+    return { front: targetFront, prepT: 0 };
+  };
+
+  const scheduleMotionFrame = () => {
+    if (motionRafId != null) return;
+    motionRafId = requestAnimationFrame((ts) => {
+      motionRafId = null;
+      renderStack(ts);
+    });
+  };
+
+  const getStackState = (front, i) => {
+    const cardHeight = getCardHeight();
+    const peek = getPeekPx();
+    const behindStep = cardHeight - peek;
+    let rel = front - i;
+
+    /* At front=0, show the full deck underneath card 1 (same depth as later states). */
+    if (front === 0 && i > 0) {
+      rel = i;
+    }
+
+    let translateY = 0;
+    let scaleX = 1;
+    let scaleY = 1;
+    let opacity = 1;
+    let zIndex = 10;
+    const inactiveScaleX = 0.96;
+
+    if (rel >= 0) {
+      translateY = rel * behindStep * 0.12 + rel * peek;
+      scaleX = Math.max(inactiveScaleX, 1 - rel * 0.022);
+      scaleY = Math.max(INACTIVE_SCALE_Y, 1 - rel * 0.1);
+      opacity = Math.max(0.42, 1 - rel * 0.2);
+      zIndex = 100 - Math.round(rel * 14);
+    } else if (rel > -1) {
+      const rise = 1 + rel;
+      translateY = (1 - rise) * behindStep;
+      scaleX = lerp(inactiveScaleX, 1, rise);
+      scaleY = lerp(INACTIVE_SCALE_Y, 1, rise);
+      opacity = 0.28 + rise * 0.72;
+      zIndex = 70 + Math.round(rise * 50);
+    } else {
+      const depth = -rel - 1;
+      translateY = behindStep + depth * (peek * 0.35);
+      scaleX = inactiveScaleX;
+      scaleY = INACTIVE_SCALE_Y;
+      opacity = Math.max(0, 0.28 - depth * 0.28);
+      zIndex = Math.max(1, 18 - Math.round(depth * 4));
+    }
+
+    return {
+      translateY,
+      scaleX,
+      scaleY,
+      opacity,
+      zIndex,
+      isActive: rel >= -0.35 && rel < 0.5,
+    };
+  };
+
+  const getContentOpacity = (front, i) => {
+    if (front === 0 && i > 0) return 0;
+
+    const dist = front - i;
+    if (dist >= 0 && dist < 1) {
+      return 1 - smoothstep(0.38, 0.62, dist);
+    }
+    if (dist > -1 && dist <= 0) {
+      return smoothstep(0.38, 0.62, dist + 1);
+    }
+    return 0;
+  };
+
+  const applyCardVisual = (card, state) => {
+    const activeBoost = state.isActive ? 1.02 : 1;
+    const scaleX = state.scaleX * activeBoost;
+    const scaleY = state.scaleY * activeBoost;
+    card.style.transform = `translate3d(0, ${state.translateY.toFixed(1)}px, 0) scale(${scaleX.toFixed(3)}, ${scaleY.toFixed(3)})`;
+    card.style.opacity = state.opacity.toFixed(3);
+    card.style.zIndex = String(state.zIndex);
+    card.classList.toggle('is-active', state.isActive);
+  };
+
+  const applyCardContent = (card, titleOpacity, descOpacity = null) => {
+    const titleOp = Math.max(0, Math.min(1, titleOpacity)).toFixed(3);
+    const descOp = Math.max(0, Math.min(1, descOpacity ?? titleOpacity)).toFixed(3);
+    const heading = card.querySelector('h3');
+    const desc = card.querySelector('p');
+    if (heading) heading.style.opacity = titleOp;
+    if (desc) desc.style.opacity = descOp;
+  };
+
+  const clearCardContentStyles = (card) => {
+    card.querySelector('.why-genzrix-stack-icon')?.style.removeProperty('opacity');
+    card.querySelector('h3')?.style.removeProperty('opacity');
+    card.querySelector('p')?.style.removeProperty('opacity');
+    card.style.removeProperty('--morph');
+    card.classList.remove('is-morph-layout');
+    card.classList.remove('is-morph-row');
+  };
+
+  const applyStack = (front, prepT = 0) => {
+    stackEl.classList.remove('is-summary', 'is-morphing');
+    stackEl.classList.add('is-stacking');
+    stackEl.style.height = `${stackBaseHeight}px`;
+    cards.forEach((card) => {
+      card.classList.remove('is-compact');
+      clearCardContentStyles(card);
+    });
+
+    cards.forEach((card, i) => {
+      let state = getStackState(front, i);
+      if (prepT > 0) {
+        const rel = front - i;
+        if (front === 0 && i > 0) {
+          state = applyAnticipationPrep(state, prepT, i);
+        } else {
+          state = applyAnticipationPrep(state, prepT, rel);
+        }
+      }
+      applyCardVisual(card, state);
+      applyCardContent(card, getContentOpacity(front, i));
+    });
+  };
+
+  const applySummary = (rawProgress) => {
+    const t = Math.max(0, Math.min(1, rawProgress));
+    const morph = easeInOutCubic(t);
+    const stackFront = cards.length - 1;
+    const listHeight = getSummaryListHeight();
+    const complete = morph >= 0.995;
+    const peek = getPeekPx();
+
+    /* Phase 1: card 4 slides back while stack stays intact. Phase 2: stack spreads into summary rows. */
+    const slidePhase = easeInOutCubic(Math.min(1, morph / 0.4));
+    const spreadPhase = easeInOutCubic(Math.max(0, (morph - 0.36) / 0.64));
+    const layoutMorph = easeInOutCubic(Math.min(1, spreadPhase * 1.2));
+    const positionMorph = spreadPhase;
+
+    stackEl.classList.add('is-stacking');
+    stackEl.classList.toggle('is-morphing', !complete);
+    stackEl.classList.toggle('is-summary', complete);
+    if (complete) {
+      stackEl.classList.remove('is-stacking', 'is-morphing');
+    }
+
+    stackEl.style.height = `${lerp(stackBaseHeight, listHeight, morph).toFixed(1)}px`;
+
+    cards.forEach((card, i) => {
+      const from = getStackState(stackFront, i);
+      const targetY = i * (ROW_HEIGHT + ROW_GAP);
+      const depth = stackFront - i;
+      const slideOffset = slidePhase * peek * (i === stackFront ? 0.75 : Math.max(0.12, 0.22 - depth * 0.04));
+      const slideY = from.translateY + slideOffset;
+      const translateY = lerp(slideY, targetY, positionMorph);
+      const scaleX = lerp(lerp(from.scaleX, from.scaleX * 0.985, slidePhase), 1, positionMorph);
+      const scaleY = lerp(lerp(from.scaleY, from.scaleY * 0.985, slidePhase), 1, positionMorph);
+      const opacity = lerp(from.opacity, 1, morph);
+
+      card.style.transform = `translate3d(0, ${translateY.toFixed(1)}px, 0) scale(${scaleX.toFixed(3)}, ${scaleY.toFixed(3)})`;
+      card.style.opacity = opacity.toFixed(3);
+      card.style.zIndex = String(10 + i);
+      card.classList.toggle('is-active', !complete && i === stackFront && morph < 0.42);
+      card.classList.toggle('is-compact', complete);
+      card.classList.toggle('is-morph-layout', !complete && spreadPhase > 0);
+      card.classList.toggle('is-morph-row', !complete && layoutMorph > 0.22);
+      card.style.setProperty('--morph', layoutMorph.toFixed(3));
+
+      if (complete) {
+        clearCardContentStyles(card);
+        return;
+      }
+
+      let titleOpacity = 0;
+      let descOpacity = 0;
+
+      if (spreadPhase <= 0.02) {
+        titleOpacity = i === stackFront ? 1 : 0;
+        descOpacity = i === stackFront ? 1 : 0;
+      } else if (spreadPhase < 0.55) {
+        const reveal = smoothstep(0, 1, spreadPhase / 0.55);
+        if (i === stackFront) {
+          titleOpacity = 1;
+          descOpacity = 1 - smoothstep(0.15, 0.85, spreadPhase / 0.55);
+        } else {
+          titleOpacity = reveal;
+          descOpacity = 0;
+        }
+      } else {
+        titleOpacity = 1;
+        descOpacity = 0;
+      }
+
+      applyCardContent(card, titleOpacity, descOpacity);
+    });
+  };
+
+  const updateScrollHeight = () => {
+    stackBaseHeight = getStackBaseHeight();
+    const pinHeight = pinEl.offsetHeight;
+    scrollRoot.style.height = `${pinHeight + getScrollDistance()}px`;
+  };
+
+  const renderStack = (timestamp = performance.now()) => {
+    const scrolled = getRawScrollProgress();
+    const cardPhaseEnd = getCardPhaseEnd();
+    const holdEnd = getHoldEnd();
+
+    if (scrolled <= cardPhaseEnd) {
+      const targetFront = getFrontFromScroll(scrolled);
+      const { front, prepT } = resolveStackFront(targetFront, timestamp);
+      applyStack(front, prepT);
+      if (stackMotion.phase === 'anticipate') {
+        scheduleMotionFrame();
+      }
+    } else if (scrolled <= holdEnd) {
+      stackMotion.phase = 'idle';
+      stackMotion.lastRestFront = cards.length - 1;
+      applyStack(cards.length - 1);
+    } else {
+      stackMotion.phase = 'idle';
+      const summaryProgress = (scrolled - holdEnd) / getSummaryHeight();
+      applySummary(summaryProgress);
+    }
+  };
+
+  const onScroll = () => {
+    if (scrollTicking) return;
+    scrollTicking = true;
+    requestAnimationFrame((ts) => {
+      renderStack(ts);
+      scrollTicking = false;
+    });
+  };
+
+  updateScrollHeight();
+  applyStack(0);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', () => {
+    updateScrollHeight();
+    onScroll();
+  }, { passive: true });
+}
+
+initWhyGenzrixStack();
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -824,14 +1303,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     /*
-     * Fixed scroll distance per card — tuned to real input, not viewport ratios.
-     * Desktop ~100px per wheel notch → 200px ≈ 2 notches per card.
-     * Mobile ~85px per thumb swipe → 170px ≈ 2 swipes per card.
+     * Fixed scroll distance per card (px of page scroll while pinned).
+     * Many systems emit ~30–40px per wheel tick, so 150px ≈ 2–4 ticks;
+     * progress is measured from sticky pin engagement, not scroll-root top.
      */
     const STEP_PX = {
-      desktop: 200,
-      tablet: 185,
-      mobile: 170,
+      desktop: 150,
+      tablet: 140,
+      mobile: 120,
+    };
+
+    const isMobilePacing = () => window.innerWidth <= 768;
+
+    const getStickyTop = () => {
+      const top = parseFloat(getComputedStyle(pinEl).top);
+      return Number.isFinite(top) ? top : 0;
+    };
+
+    /** Pin-relative scroll progress in px (0 when sticky engages). */
+    const getRawScrollProgress = () => {
+      const engageAt = getStickyTop();
+      return Math.max(0, engageAt - scrollRoot.getBoundingClientRect().top);
     };
 
     const getStepHeight = () => {
@@ -842,21 +1334,32 @@ document.addEventListener('DOMContentLoaded', () => {
       return reducedMotion ? Math.round(px * 0.6) : px;
     };
 
-    const isMobilePacing = () => window.innerWidth <= 768;
-
-    const getRootTop = () => scrollRoot.getBoundingClientRect().top + window.scrollY;
-
-    const getScrollDistance = () => Math.max(0, (panels.length - 1) * getStepHeight());
-
-    const getIndexFromScroll = () => {
-      const scrolled = window.scrollY - getRootTop();
-      const stepHeight = getStepHeight();
-      const maxIndex = panels.length - 1;
-
-      if (scrolled <= 0) return 0;
-      if (scrolled >= maxIndex * stepHeight) return maxIndex;
-      return Math.min(maxIndex, Math.floor(scrolled / stepHeight));
+    /*
+     * Scroll progression controller — maps pin progress ↔ card index.
+     * Structured for future normalized wheel/touch intent (ingestScrollDelta).
+     */
+    const progression = {
+      panelCount: panels.length,
+      getStepPx: getStepHeight,
+      getRawProgress: getRawScrollProgress,
+      progressToIndex(progress) {
+        const step = this.getStepPx();
+        const maxIndex = this.panelCount - 1;
+        if (step <= 0 || progress <= 0) return 0;
+        if (progress >= maxIndex * step) return maxIndex;
+        return Math.min(maxIndex, Math.floor(progress / step));
+      },
+      indexToProgress(index) {
+        return Math.max(0, index * this.getStepPx());
+      },
+      getTrackLength() {
+        return Math.max(0, (this.panelCount - 1) * this.getStepPx());
+      },
     };
+
+    const getScrollDistance = () => progression.getTrackLength();
+
+    const getIndexFromScroll = () => progression.progressToIndex(getRawScrollProgress());
 
     const syncPanelHeight = () => {
       const maxHeight = panels.reduce((max, panel) => Math.max(max, panel.offsetHeight), 380);
@@ -942,10 +1445,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const scrollToIndex = (index) => {
-      const rootTop = getRootTop();
-      const stepHeight = getStepHeight();
-      const targetY = rootTop + index * stepHeight + stepHeight * 0.15;
-      window.scrollTo({ top: targetY, behavior: 'smooth' });
+      const targetProgress = progression.indexToProgress(index);
+      const delta = targetProgress - getRawScrollProgress();
+      window.scrollTo({ top: window.scrollY + delta, behavior: 'smooth' });
     };
 
     const onScroll = () => {
@@ -1005,195 +1507,6 @@ document.addEventListener('DOMContentLoaded', () => {
   mountServicesShowcase();
 
   initServicesPage();
-
-  function initWhyGenzrixStack() {
-    const scrollRoot = document.querySelector('[data-why-stack-scroll]');
-    if (!scrollRoot) return;
-
-    const pinEl = scrollRoot.querySelector('.why-genzrix-pin');
-    const stackEl = scrollRoot.querySelector('[data-why-stack]');
-    const cards = [...scrollRoot.querySelectorAll('[data-why-card]')];
-    if (!pinEl || !stackEl || cards.length < 2) return;
-
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const STEP_VH = reducedMotion ? 2.25 : 4.5;
-    const HOLD_VH = reducedMotion ? 0.5 : 1;
-    const SUMMARY_VH = reducedMotion ? 0.5 : 1;
-    const ROW_HEIGHT = 122;
-    const ROW_GAP = 18;
-    const INACTIVE_SCALE_Y = 1 / 1.2;
-    let scrollTicking = false;
-    let stackBaseHeight = 0;
-
-    const easeOutCubic = (t) => 1 - (1 - t) ** 3;
-    const easeInOutCubic = (t) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
-    const lerp = (a, b, t) => a + (b - a) * t;
-
-    const getStepHeight = () => window.innerHeight * STEP_VH;
-    const getHoldHeight = () => window.innerHeight * HOLD_VH;
-    const getSummaryHeight = () => window.innerHeight * SUMMARY_VH;
-    const getRootTop = () => scrollRoot.getBoundingClientRect().top + window.scrollY;
-    const getCardHeight = () => cards[0]?.offsetHeight || stackEl.offsetHeight;
-    const getPeekPx = () => Math.max(48, getCardHeight() * 0.22);
-    const getStackBaseHeight = () => {
-      const parsed = parseFloat(getComputedStyle(stackEl).height);
-      return Number.isFinite(parsed) && parsed > 0 ? parsed : stackEl.offsetHeight;
-    };
-    const getSummaryListHeight = () => cards.length * ROW_HEIGHT + (cards.length - 1) * ROW_GAP;
-
-    const getCardPhaseEnd = () => (cards.length - 1) * getStepHeight();
-    const getHoldEnd = () => getCardPhaseEnd() + getHoldHeight();
-    const getScrollDistance = () => getHoldEnd() + getSummaryHeight();
-
-    const getFrontFromScroll = (scrolled) => {
-      const stepHeight = getStepHeight();
-      const maxFront = cards.length - 1;
-
-      if (scrolled <= 0 || stepHeight <= 0) return 0;
-      return Math.min(maxFront, scrolled / stepHeight);
-    };
-
-    const getStackState = (front, i) => {
-      const cardHeight = getCardHeight();
-      const peek = getPeekPx();
-      const behindStep = cardHeight - peek;
-      const rel = front - i;
-      let translateY = 0;
-      let scaleX = 1;
-      let scaleY = 1;
-      let opacity = 1;
-      let zIndex = 10;
-      const inactiveScaleX = 0.96;
-
-      if (rel >= 0) {
-        translateY = rel * behindStep * 0.12 + rel * peek;
-        scaleX = Math.max(inactiveScaleX, 1 - rel * 0.022);
-        scaleY = Math.max(INACTIVE_SCALE_Y, 1 - rel * 0.1);
-        opacity = Math.max(0.42, 1 - rel * 0.2);
-        zIndex = 100 - Math.round(rel * 14);
-      } else if (rel > -1) {
-        const rise = 1 + rel;
-        translateY = (1 - rise) * behindStep;
-        scaleX = lerp(inactiveScaleX, 1, rise);
-        scaleY = lerp(INACTIVE_SCALE_Y, 1, rise);
-        opacity = 0.28 + rise * 0.72;
-        zIndex = 70 + Math.round(rise * 50);
-      } else {
-        const depth = -rel - 1;
-        translateY = behindStep + depth * (peek * 0.35);
-        scaleX = inactiveScaleX;
-        scaleY = INACTIVE_SCALE_Y;
-        opacity = Math.max(0, 0.28 - depth * 0.28);
-        zIndex = Math.max(1, 18 - Math.round(depth * 4));
-      }
-
-      return {
-        translateY,
-        scaleX,
-        scaleY,
-        opacity,
-        zIndex,
-        isActive: rel >= -0.05 && rel < 0.35,
-      };
-    };
-
-    const applyCardVisual = (card, state) => {
-      const activeBoost = state.isActive ? 1.02 : 1;
-      const scaleX = state.scaleX * activeBoost;
-      const scaleY = state.scaleY * activeBoost;
-      card.style.transform = `translate3d(0, ${state.translateY.toFixed(1)}px, 0) scale(${scaleX.toFixed(3)}, ${scaleY.toFixed(3)})`;
-      card.style.opacity = state.opacity.toFixed(3);
-      card.style.zIndex = String(state.zIndex);
-      card.classList.toggle('is-active', state.isActive);
-    };
-
-    const applyStack = (front) => {
-      stackEl.classList.remove('is-summary');
-      stackEl.classList.add('is-stacking');
-      stackEl.style.height = `${stackBaseHeight}px`;
-      cards.forEach((card) => card.classList.remove('is-compact'));
-
-      cards.forEach((card, i) => {
-        const desc = card.querySelector('p');
-        if (desc) desc.style.opacity = '';
-        applyCardVisual(card, getStackState(front, i));
-      });
-    };
-
-    const applySummary = (rawProgress) => {
-      stackEl.classList.remove('is-stacking');
-      const t = Math.max(0, Math.min(1, rawProgress));
-      const descFade = easeOutCubic(Math.min(1, t / 0.4));
-      const morph = easeInOutCubic(Math.max(0, (t - 0.18) / 0.82));
-      const front = cards.length - 1;
-      const listHeight = getSummaryListHeight();
-
-      stackEl.classList.toggle('is-summary', morph > 0.97);
-      stackEl.style.height = `${lerp(stackBaseHeight, listHeight, morph).toFixed(1)}px`;
-
-      cards.forEach((card, i) => {
-        const stagger = i * 0.045;
-        const cardMorph = easeInOutCubic(Math.max(0, Math.min(1, (morph - stagger) / Math.max(0.001, 1 - stagger))));
-        const from = getStackState(front, i);
-        const targetY = i * (ROW_HEIGHT + ROW_GAP);
-        const translateY = lerp(from.translateY, targetY, cardMorph);
-        const scaleX = lerp(from.scaleX, 1, cardMorph);
-        const scaleY = lerp(from.scaleY, 1, cardMorph);
-        const opacity = lerp(from.opacity, 1, cardMorph);
-        const zIndex = 10 + i;
-
-        card.style.transform = `translate3d(0, ${translateY.toFixed(1)}px, 0) scale(${scaleX.toFixed(3)}, ${scaleY.toFixed(3)})`;
-        card.style.opacity = opacity.toFixed(3);
-        card.style.zIndex = String(zIndex);
-        card.classList.toggle('is-active', false);
-        card.classList.toggle('is-compact', cardMorph > 0.62);
-
-        const desc = card.querySelector('p');
-        if (desc) desc.style.opacity = (1 - descFade).toFixed(3);
-      });
-    };
-
-    const updateScrollHeight = () => {
-      stackBaseHeight = getStackBaseHeight();
-      const pinHeight = pinEl.offsetHeight;
-      scrollRoot.style.height = `${pinHeight + getScrollDistance()}px`;
-    };
-
-    const onScroll = () => {
-      if (scrollTicking) return;
-      scrollTicking = true;
-            requestAnimationFrame(() => {
-        const scrolled = Math.max(0, window.scrollY - getRootTop());
-        const cardPhaseEnd = getCardPhaseEnd();
-        const holdEnd = getHoldEnd();
-
-        if (scrolled <= cardPhaseEnd) {
-          applyStack(getFrontFromScroll(scrolled));
-        } else if (scrolled <= holdEnd) {
-          applyStack(cards.length - 1);
-        } else {
-          const summaryProgress = (scrolled - holdEnd) / getSummaryHeight();
-          applySummary(summaryProgress);
-        }
-
-        scrollTicking = false;
-      });
-    };
-
-    updateScrollHeight();
-    requestAnimationFrame(() => {
-      updateScrollHeight();
-      applyStack(0);
-      onScroll();
-    });
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', () => {
-      updateScrollHeight();
-      onScroll();
-    }, { passive: true });
-  }
-
-  initWhyGenzrixStack();
 
   /* ── FOOTER: Dust Text + Cube Grid (Alina) ── */
   (function () {

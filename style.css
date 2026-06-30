@@ -727,12 +727,26 @@ main {
   color: var(--ds-text);
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   EXECUTION LAYER — VISUAL BASELINE FROZEN (Why GenZrix / ds-section--about)
+   Do not change colors, glass, shadows, icons, typography, or layout here.
+   Functional scroll logic lives in script.js → initWhyGenzrixStack().
+   See .cursor/rules/execution-layer-visual-freeze.mdc
+   ═══════════════════════════════════════════════════════════════════════════ */
 .ds-section--about .why-genzrix-stack-card {
   --why-peach-fill: rgba(109, 94, 248, 0.14);
 }
 
-.ds-section--about .why-genzrix-stack.is-stacking .why-genzrix-stack-card.is-active .why-genzrix-stack-icon {
-  background: rgba(109, 94, 248, 0.22) !important;
+/* Execution stack: static dark icon styling on every card, every phase */
+.ds-section--about .why-genzrix-stack .why-genzrix-stack-icon {
+  background: linear-gradient(180deg, #2E4058 0%, #20222C 100%) !important;
+  color: var(--ds-accent) !important;
+  transition: none !important;
+}
+
+.why-genzrix-stack.is-stacking:not(.is-summary):not(.is-morphing) .why-genzrix-stack-card:not(.is-active) h3,
+.why-genzrix-stack.is-stacking:not(.is-summary):not(.is-morphing) .why-genzrix-stack-card:not(.is-active) p {
+  opacity: 0;
 }
 
 /* How It Works */
@@ -2519,6 +2533,10 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   color: var(--red);
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   EXECUTION LAYER — VISUAL BASELINE FROZEN (layout, stack, summary morph CSS)
+   Summary .is-compact styling is the reference. Do not alter visual tokens.
+   ═══════════════════════════════════════════════════════════════════════════ */
 /* Why GenZrix — interactive stack */
 .about-why-section.why-genzrix {
   padding: 0;
@@ -2720,43 +2738,67 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
 
 .why-genzrix-stack-card p {
   margin: 0;
-  transition: opacity 0.4s ease, max-height 0.5s ease, visibility 0.4s ease;
 }
 
-/* Stack phase — inactive cards show shape only, not readable content */
-.why-genzrix-stack.is-stacking .why-genzrix-stack-card:not(.is-active) p {
-  opacity: 0 !important;
-  visibility: hidden;
-}
-
-.why-genzrix-stack.is-stacking .why-genzrix-stack-card:not(.is-active) .why-genzrix-stack-icon {
-  opacity: 0;
-  visibility: hidden;
-}
-
-.why-genzrix-stack.is-stacking .why-genzrix-stack-card:not(.is-active) h3 {
-  opacity: 0.07;
-  visibility: visible;
-  filter: blur(5px);
-  user-select: none;
-  pointer-events: none;
-}
-
-.why-genzrix-stack.is-stacking .why-genzrix-stack-card.is-active h3,
-.why-genzrix-stack.is-stacking .why-genzrix-stack-card.is-active p,
-.why-genzrix-stack.is-stacking .why-genzrix-stack-card.is-active .why-genzrix-stack-icon {
-  opacity: 1;
-  visibility: visible;
-  filter: none;
-}
-
-.why-genzrix-stack.is-stacking .why-genzrix-stack-card.is-active .why-genzrix-stack-icon {
-  background: #C2CDDE !important;
+/* Scroll-driven stack: JS owns transform and content opacity every frame */
+.why-genzrix-stack.is-stacking .why-genzrix-stack-card,
+.why-genzrix-stack.is-morphing .why-genzrix-stack-card {
+  transition: none;
 }
 
 .why-genzrix-stack.is-stacking .why-genzrix-stack-card .why-genzrix-stack-icon,
-.why-genzrix-stack.is-stacking .why-genzrix-stack-card h3 {
-  transition: opacity 0.4s ease, visibility 0.4s ease, filter 0.4s ease;
+.why-genzrix-stack.is-stacking .why-genzrix-stack-card h3,
+.why-genzrix-stack.is-stacking .why-genzrix-stack-card p,
+.why-genzrix-stack.is-morphing .why-genzrix-stack-card .why-genzrix-stack-icon,
+.why-genzrix-stack.is-morphing .why-genzrix-stack-card h3,
+.why-genzrix-stack.is-morphing .why-genzrix-stack-card p {
+  transition: none;
+}
+
+/* Summary morph: lerp stack card into compact row without a layout snap */
+.why-genzrix-stack-card.is-morph-layout {
+  width: calc((1 - var(--morph, 0)) * 100% + var(--morph, 0) * 94%);
+  left: calc(var(--morph, 0) * 3%);
+  min-height: calc((1 - var(--morph, 0)) * clamp(280px, 36vh, 380px) + var(--morph, 0) * 122px);
+  padding:
+    calc((1 - var(--morph, 0)) * clamp(28px, 3vw, 36px))
+    calc((1 - var(--morph, 0)) * clamp(24px, 2.5vw, 32px) + var(--morph, 0) * 60px)
+    calc((1 - var(--morph, 0)) * clamp(28px, 3vw, 36px))
+    calc((1 - var(--morph, 0)) * clamp(24px, 2.5vw, 32px) + var(--morph, 0) * 22px);
+  overflow: hidden;
+}
+
+.why-genzrix-stack-card.is-morph-layout.is-morph-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: calc(var(--morph, 0) * 28px);
+}
+
+.why-genzrix-stack-card.is-morph-layout::before {
+  opacity: calc(1 - var(--morph, 0));
+}
+
+.why-genzrix-stack-card.is-morph-layout .why-genzrix-stack-icon {
+  width: calc((1 - var(--morph, 0)) * 48px + var(--morph, 0) * 74px);
+  height: calc((1 - var(--morph, 0)) * 48px + var(--morph, 0) * 74px);
+  min-width: calc((1 - var(--morph, 0)) * 48px + var(--morph, 0) * 74px);
+  margin-bottom: calc((1 - var(--morph, 0)) * 20px);
+  border-radius: calc((1 - var(--morph, 0)) * 12px + var(--morph, 0) * 37px);
+}
+
+.why-genzrix-stack-card.is-morph-layout .why-genzrix-stack-icon svg {
+  width: calc((1 - var(--morph, 0)) * 22px + var(--morph, 0) * 28px);
+  height: calc((1 - var(--morph, 0)) * 22px + var(--morph, 0) * 28px);
+}
+
+.why-genzrix-stack-card.is-morph-layout h3 {
+  margin: 0;
+}
+
+.why-genzrix-stack-card.is-morph-layout.is-morph-row h3 {
+  flex: var(--morph, 0) 1 0;
+  min-width: 0;
 }
 
 .why-genzrix-stack.is-summary {
@@ -2815,7 +2857,7 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   border-radius: 50%;
   background: linear-gradient(180deg, #2E4058 0%, #20222C 100%) !important;
   color: var(--ds-accent) !important;
-  transition: background 0.35s ease;
+  transition: none;
   z-index: 3;
 }
 
@@ -5566,7 +5608,7 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
     linear-gradient(152deg, rgba(255, 255, 255, 0.04) 0%, transparent 42%),
     linear-gradient(168deg, rgba(22, 21, 32, 0.92) 0%, rgba(12, 11, 18, 0.96) 100%);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow:
+    box-shadow:
     0 28px 72px rgba(0, 0, 0, 0.38),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
   overflow: hidden;
@@ -10310,5 +10352,5 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
     grid-template-rows: repeat(5, 1fr);
     gap: 5px;
     padding: 16px;
-  }
+    }
 }
