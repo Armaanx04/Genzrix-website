@@ -493,7 +493,38 @@ function initWhyGenzrixStack() {
   }, { passive: true });
 }
 
+/* Why GenZrix ring — path distribution polish only (~5% angular spread).
+   Does not alter typography, content, or styling; see execution-layer-visual-freeze. */
+const WHY_GENZRIX_RING_DISTRIBUTION = 1.05;
+
+function initWhyGenzrixRingDistribution() {
+  const path = document.getElementById('whyGenzrixRing');
+  const textEl = document.querySelector('.why-genzrix-ring-text');
+  const textPath = textEl?.querySelector('textPath');
+  if (!path || !textEl || !textPath) return;
+
+  const apply = () => {
+    textPath.removeAttribute('textLength');
+    textPath.removeAttribute('lengthAdjust');
+
+    const pathLen = path.getTotalLength();
+    const naturalLen = textEl.getComputedTextLength();
+    if (!pathLen || !naturalLen) return;
+
+    const targetLen = Math.min(pathLen, naturalLen * WHY_GENZRIX_RING_DISTRIBUTION);
+    textPath.setAttribute('textLength', String(targetLen));
+    textPath.setAttribute('lengthAdjust', 'spacing');
+  };
+
+  if (document.fonts?.ready) {
+    document.fonts.ready.then(() => requestAnimationFrame(apply));
+  } else {
+    requestAnimationFrame(apply);
+  }
+}
+
 initWhyGenzrixStack();
+initWhyGenzrixRingDistribution();
 
 document.addEventListener('DOMContentLoaded', () => {
 
