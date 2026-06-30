@@ -2772,7 +2772,12 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: calc(var(--morph, 0) * 28px);
+  gap: 28px;
+  width: 94%;
+  left: 3%;
+  min-height: 122px;
+  height: 122px;
+  padding: 0 60px 0 22px;
 }
 
 .why-genzrix-stack-card.is-morph-layout::before {
@@ -2796,9 +2801,40 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   margin: 0;
 }
 
-.why-genzrix-stack-card.is-morph-layout.is-morph-row h3 {
-  flex: var(--morph, 0) 1 0;
+.why-genzrix-stack-card.is-morph-layout.is-morph-row h3:not(.why-genzrix-compact-title-split) {
+  flex: 1 1 auto;
+  flex-shrink: 0;
+  min-width: min-content;
+  margin: 0 -52px 0 0;
+  padding-right: 8px;
+  color: var(--metal-card-heading-color);
+  font-size: var(--metal-card-heading-size);
+  font-weight: var(--metal-card-heading-weight);
+  line-height: 1.28;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  z-index: 3;
+}
+
+.why-genzrix-stack-card:not(.is-compact):not(.is-morph-layout.is-morph-row) .why-genzrix-compact-title-break {
+  display: none;
+}
+
+.why-genzrix-stack-card.is-compact h3.why-genzrix-compact-title-split,
+.why-genzrix-stack-card.is-morph-layout.is-morph-row h3.why-genzrix-compact-title-split {
+  margin: 0;
+  padding-right: 0;
+  flex: 1 1 auto;
+  flex-shrink: 1;
   min-width: 0;
+  white-space: normal;
+  line-height: 1.14;
+  align-self: center;
+  color: var(--metal-card-heading-color);
+  font-size: var(--metal-card-heading-size);
+  font-weight: var(--metal-card-heading-weight);
+  letter-spacing: -0.01em;
+  z-index: 3;
 }
 
 .why-genzrix-stack.is-summary {
@@ -2866,10 +2902,12 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   height: 28px;
 }
 
-.why-genzrix-stack-card.is-compact h3 {
-  margin: 0;
-  flex: 1;
-  min-width: 0;
+.why-genzrix-stack-card.is-compact h3:not(.why-genzrix-compact-title-split) {
+  margin: 0 -52px 0 0;
+  padding-right: 8px;
+  flex: 1 1 auto;
+  flex-shrink: 0;
+  min-width: min-content;
   color: var(--metal-card-heading-color);
   font-size: var(--metal-card-heading-size);
   font-weight: var(--metal-card-heading-weight);
@@ -9541,6 +9579,7 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   .why-genzrix-headline { margin-left: auto; margin-right: auto; }
   .why-genzrix-stack { height: clamp(320px, 52vh, 420px); max-width: 520px; margin: 0 auto; }
   .why-genzrix-stack-card.is-compact h3 { white-space: normal; }
+  .why-genzrix-stack-card.is-morph-layout.is-morph-row h3 { white-space: normal; }
   .about-us-nav { margin-top: 36px; }
   .about-principles-grid { grid-template-columns: 1fr; gap: 40px; }
   .about-page-hero { padding-top: 128px; padding-bottom: 38px; }

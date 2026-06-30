@@ -43,6 +43,8 @@ function initWhyGenzrixStack() {
     readPlateauWeights: [transitionWeight, transitionWeight],
     holdVh: reducedMotion ? 0.5 : 1,
     summaryWeight: transitionWeight,
+    /** Reverse-scroll rest after summary settles — same px unit as card transitions. */
+    summaryRestWeight: transitionWeight,
   };
 
   const ROW_HEIGHT = 122;
@@ -132,6 +134,12 @@ function initWhyGenzrixStack() {
     getSummaryHeight() {
       return getTransitionStepPx();
     },
+    getSummaryRestHoldPx() {
+      return Math.round(getTransitionStepPx() * PACING.summaryRestWeight);
+    },
+    getSummaryMorphEnd() {
+      return this.getHoldEnd() + this.getSummaryHeight();
+    },
     getHoldEnd() {
       return this.getCardPhaseEnd() + this.getHoldHeight();
     },
@@ -163,6 +171,10 @@ function initWhyGenzrixStack() {
 
   const getHoldHeight = () => progression.getHoldHeight();
   const getSummaryHeight = () => progression.getSummaryHeight();
+  const getSummaryRestHoldPx = () => progression.getSummaryRestHoldPx();
+  const getSummaryMorphEnd = () => progression.getSummaryMorphEnd();
+
+  let summaryHasSettled = false;
   const getCardHeight = () => cards[0]?.offsetHeight || stackEl.offsetHeight;
   const getPeekPx = () => Math.max(48, getCardHeight() * 0.22);
   const getStackBaseHeight = () => {
@@ -176,6 +188,35 @@ function initWhyGenzrixStack() {
   const getScrollDistance = () => progression.getScrollDistance();
 
   const getFrontFromScroll = (scrolled) => progression.progressToFront(scrolled);
+
+  /** Summary morph 0→1; reverse-scroll rest hold after full settle (scroll-driven hysteresis). */
+  const getSummaryProgress = (scrolled) => {
+    const holdEnd = getHoldEnd();
+    const morphEnd = getSummaryMorphEnd();
+    const restHold = getSummaryRestHoldPx();
+    const reverseStart = morphEnd - restHold;
+
+    if (scrolled <= holdEnd) {
+      summaryHasSettled = false;
+      return 0;
+    }
+
+    const linear = Math.min(1, (scrolled - holdEnd) / getSummaryHeight());
+
+    if (linear >= 0.995) {
+      summaryHasSettled = true;
+    }
+
+    if (summaryHasSettled && scrolled >= reverseStart) {
+      return 1;
+    }
+
+    if (summaryHasSettled && scrolled < reverseStart) {
+      return Math.max(0, (scrolled - holdEnd) / (reverseStart - holdEnd));
+    }
+
+    return linear;
+  };
 
   /** Transition lifecycle: idle → anticipate → follow (scroll-driven, no bolted delays). */
   const ANTICIPATE_MS = 100;
@@ -386,6 +427,12 @@ function initWhyGenzrixStack() {
     const spreadPhase = easeInOutCubic(Math.max(0, (morph - 0.36) / 0.64));
     const layoutMorph = easeInOutCubic(Math.min(1, spreadPhase * 1.2));
     const positionMorph = spreadPhase;
+    /* Summary cards arrive as one composition — no staggered heading reveals. */
+    const summaryArriveStart = 0.26;
+    const summaryArriveEnd = 0.4;
+    const summaryArrive = smoothstep(summaryArriveStart, summaryArriveEnd, spreadPhase);
+    const inSlide = spreadPhase <= 0.02;
+    const beforeSummaryArrive = spreadPhase > 0.02 && spreadPhase < summaryArriveStart;
 
     stackEl.classList.add('is-stacking');
     stackEl.classList.toggle('is-morphing', !complete);
@@ -405,7 +452,21 @@ function initWhyGenzrixStack() {
       const translateY = lerp(slideY, targetY, positionMorph);
       const scaleX = lerp(lerp(from.scaleX, from.scaleX * 0.985, slidePhase), 1, positionMorph);
       const scaleY = lerp(lerp(from.scaleY, from.scaleY * 0.985, slidePhase), 1, positionMorph);
-      const opacity = lerp(from.opacity, 1, morph);
+
+      let opacity;
+      let titleOpacity = 0;
+      let descOpacity = 0;
+
+      if (complete) {
+        opacity = 1;
+      } else if (inSlide) {
+        opacity = i === stackFront ? lerp(from.opacity, 1, slidePhase) : from.opacity;
+      } else if (beforeSummaryArrive) {
+        const prepShellFade = smoothstep(summaryArriveStart * 0.72, summaryArriveStart, spreadPhase);
+        opacity = i === stackFront ? Math.max(0, 1 - prepShellFade) : 0;
+      } else if (spreadPhase > 0.02) {
+        opacity = summaryArrive;
+      }
 
       card.style.transform = `translate3d(0, ${translateY.toFixed(1)}px, 0) scale(${scaleX.toFixed(3)}, ${scaleY.toFixed(3)})`;
       card.style.opacity = opacity.toFixed(3);
@@ -421,23 +482,15 @@ function initWhyGenzrixStack() {
         return;
       }
 
-      let titleOpacity = 0;
-      let descOpacity = 0;
-
-      if (spreadPhase <= 0.02) {
+      if (inSlide) {
         titleOpacity = i === stackFront ? 1 : 0;
         descOpacity = i === stackFront ? 1 : 0;
-      } else if (spreadPhase < 0.55) {
-        const reveal = smoothstep(0, 1, spreadPhase / 0.55);
-        if (i === stackFront) {
-          titleOpacity = 1;
-          descOpacity = 1 - smoothstep(0.15, 0.85, spreadPhase / 0.55);
-        } else {
-          titleOpacity = reveal;
-          descOpacity = 0;
-        }
-      } else {
-        titleOpacity = 1;
+      } else if (beforeSummaryArrive) {
+        const frontContentFade = smoothstep(summaryArriveStart * 0.35, summaryArriveStart, spreadPhase);
+        titleOpacity = i === stackFront ? 1 - frontContentFade : 0;
+        descOpacity = i === stackFront ? Math.max(0, 1 - frontContentFade * 1.25) : 0;
+      } else if (spreadPhase > 0.02) {
+        titleOpacity = summaryArrive;
         descOpacity = 0;
       }
 
@@ -456,6 +509,10 @@ function initWhyGenzrixStack() {
     const cardPhaseEnd = getCardPhaseEnd();
     const holdEnd = getHoldEnd();
 
+    if (scrolled <= holdEnd) {
+      summaryHasSettled = false;
+    }
+
     if (scrolled <= cardPhaseEnd) {
       const targetFront = getFrontFromScroll(scrolled);
       const { front, prepT } = resolveStackFront(targetFront, timestamp);
@@ -469,8 +526,7 @@ function initWhyGenzrixStack() {
       applyStack(cards.length - 1);
     } else {
       stackMotion.phase = 'idle';
-      const summaryProgress = (scrolled - holdEnd) / getSummaryHeight();
-      applySummary(summaryProgress);
+      applySummary(getSummaryProgress(scrolled));
     }
   };
 
