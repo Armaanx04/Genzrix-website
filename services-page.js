@@ -64,6 +64,16 @@ const ART = {
       <div class="svc-art__camera"><span class="svc-art__lens"></span></div>
       <div class="svc-art__player"><span class="svc-art__play"></span><span class="svc-art__wave"></span></div>
     </div>`,
+  analytics: `
+    <div class="svc-art svc-art--analytics">
+      <div class="svc-art__glow"></div>
+      <div class="svc-art__dash">
+        <span class="svc-art__metric">+32%</span>
+        <div class="svc-art__bars"><i></i><i></i><i></i><i></i></div>
+        <svg class="svc-art__chart" viewBox="0 0 120 48" aria-hidden="true"><path d="M4 38 L28 28 L48 32 L72 16 L96 10 L116 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+      </div>
+      <div class="svc-art__pie"></div>
+    </div>`,
   events: `
     <div class="svc-art svc-art--events">
       <div class="svc-art__glow"></div>

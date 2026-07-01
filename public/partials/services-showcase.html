@@ -422,10 +422,10 @@
 
               <article class="services-showcase-panel" role="tabpanel" id="service-panel-6" aria-labelledby="service-tab-6" data-accent="content">
                 <span class="services-showcase-emboss-num" aria-hidden="true">07</span>
-                <div class="services-showcase-visual" data-visual="content" aria-hidden="true">
+                <div class="services-showcase-visual" data-visual="analytics" aria-hidden="true">
                   <div class="showcase-visual-stage">
                     <div class="showcase-visual-glow"></div>
-                    <div class="showcase-sculpture showcase-sculpture--content">
+                    <div class="showcase-sculpture showcase-sculpture--analytics">
                       <div class="sv-scene">
                         <div class="sv-scene__rings"><span class="sv-scene__ring sv-scene__ring--1"></span><span class="sv-scene__ring sv-scene__ring--2"></span></div>
                         <div class="sv-scene__platform"><span class="sv-scene__platform-disc"></span><span class="sv-scene__platform-glow"></span></div>
@@ -433,20 +433,39 @@
                           <span class="sv-mote" style="--mote-x:8%;--mote-y:14%"></span>
                           <span class="sv-mote sv-mote--b" style="--mote-x:88%;--mote-y:88%"></span>
                           <span class="sv-mote sv-mote--c" style="--mote-x:72%;--mote-y:6%"></span>
-                          <div class="sv-glass sv-glass--player sv-sc-float-1">
-                            <span class="sv-play-ring"><span class="sv-play-icon"></span></span>
-                            <span class="sv-waveform">
-                              <i class="sv-wave-bar"></i><i class="sv-wave-bar sv-wave-bar--2"></i><i class="sv-wave-bar sv-wave-bar--3"></i><i class="sv-wave-bar sv-wave-bar--4"></i><i class="sv-wave-bar sv-wave-bar--5"></i>
-                            </span>
+                          <div class="sv-glass sv-glass--dash sv-glass--analytics-main sv-sc-float-1">
+                            <span class="sv-glass__bar sv-glass__bar--mini"></span>
+                            <div class="sv-chart-bars">
+                              <span class="sv-chart-bar sv-chart-bar--1"></span>
+                              <span class="sv-chart-bar sv-chart-bar--2"></span>
+                              <span class="sv-chart-bar sv-chart-bar--3"></span>
+                              <span class="sv-chart-bar sv-chart-bar--4"></span>
+                            </div>
+                            <svg class="sv-chart" viewBox="0 0 200 100" aria-hidden="true">
+                              <path class="sv-chart__area" d="M12 78 L44 62 L78 68 L112 42 L148 28 L188 18 L188 88 L12 88 Z" />
+                              <path class="sv-chart__line sv-sc-chart-draw" d="M12 78 L44 62 L78 68 L112 42 L148 28 L188 18" />
+                              <circle class="sv-chart__dot sv-sc-pulse" cx="44" cy="62" r="3.5" />
+                              <circle class="sv-chart__dot sv-sc-pulse sv-sc-pulse--d1" cx="112" cy="42" r="3.5" />
+                              <circle class="sv-chart__dot sv-sc-pulse sv-sc-pulse--d2" cx="188" cy="18" r="4" />
+                            </svg>
                           </div>
-                          <div class="sv-glass sv-glass--thumb sv-sc-float-2"></div>
-                          <div class="sv-glass sv-glass--film sv-sc-float-2">
-                            <span class="sv-film-hole"></span><span class="sv-film-hole"></span><span class="sv-film-hole"></span>
-                            <span class="sv-film-frame"></span>
+                          <div class="sv-glass sv-glass--metric sv-glass--analytics-kpi sv-sc-float-2">
+                            <span class="sv-metric-val">+32%</span>
+                            <span class="sv-kpi-label">Growth</span>
+                            <span class="sv-line sv-line--sm"></span>
                           </div>
-                          <div class="sv-glass sv-glass--timeline sv-sc-float-3">
-                            <span class="sv-timeline-track"><span class="sv-timeline-fill sv-sc-timeline-draw"></span><span class="sv-playhead sv-sc-playhead"></span></span>
-                            <span class="sv-timeline-head"></span>
+                          <div class="sv-glass sv-glass--analytics-pie sv-sc-float-3">
+                            <svg class="sv-pie-chart" viewBox="0 0 40 40" aria-hidden="true">
+                              <circle class="sv-pie-chart__ring" cx="20" cy="20" r="14" />
+                              <path class="sv-pie-chart__slice" d="M20 6 A14 14 0 0 1 33.6 26 L20 20 Z" />
+                              <path class="sv-pie-chart__slice sv-pie-chart__slice--accent" d="M20 20 L33.6 26 A14 14 0 0 1 20 34 Z" />
+                            </svg>
+                            <span class="sv-kpi-label">Mix</span>
+                          </div>
+                          <div class="sv-glass sv-glass--kpi sv-glass--analytics-report sv-sc-float-2">
+                            <span class="sv-kpi-label">KPI</span>
+                            <span class="sv-line sv-line--lg"></span>
+                            <span class="sv-line"></span>
                           </div>
                         </div>
                       </div>
@@ -456,17 +475,17 @@
                 <div class="services-showcase-panel-inner">
                   <div class="services-showcase-panel-head">
                     <div class="services-showcase-panel-icon">
-                      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="18" cy="12" r="6"/><path d="M8 32a10 10 0 0 1 20 0"/><circle cx="27" cy="16" r="4"/><path d="M31 32a7 7 0 0 0-7.5-5.5"/></svg>
+                      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><line x1="6" y1="30" x2="30" y2="30"/><rect x="8" y="22" width="4" height="8" rx="1"/><rect x="16" y="14" width="4" height="16" rx="1"/><rect x="24" y="18" width="4" height="12" rx="1"/><polyline points="8,18 14,12 20,16 26,8"/></svg>
                     </div>
                     <h3>Data Analytics</h3>
                   </div>
-                  <p class="services-showcase-desc">We produce photography, video, and written content that tells your story with intent. Every asset is created with distribution in mind — built to perform on platforms, not just fill a folder.</p>
+                  <p class="services-showcase-desc">Transform raw business data into actionable insights that drive smarter decisions, optimize performance, and accelerate sustainable growth across every digital initiative.</p>
                   <span class="services-showcase-includes">What's Included</span>
                   <ul class="services-showcase-list">
-                    <li>Brand and product photography</li>
-                    <li>Video production and editing (reels, explainers, testimonials)</li>
-                    <li>Copywriting for web, ads, and social</li>
-                    <li>Content strategy and editorial planning</li>
+                    <li>Business Performance Dashboards</li>
+                    <li>Marketing &amp; Campaign Analytics</li>
+                    <li>Customer Behavior &amp; Conversion Insights</li>
+                    <li>KPI Tracking, Reporting &amp; Data Visualization</li>
                   </ul>
                   <div class="services-showcase-cta">
                     <a href="contact.html" class="services-showcase-btn">Discuss this service<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
