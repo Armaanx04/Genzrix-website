@@ -1699,14 +1699,15 @@ p {
   --hero-navy: #0A1F44;
   --hero-accent: #FF4D6D;
   --hero-accent-rgb: 255, 77, 109;
-  --hero-max-w: 1280px;
+  --hero-max-w: 1480px;
   position: relative;
-  min-height: 100vh;
-  min-height: 100dvh;
+  min-height: calc(100vh + 80px);
+  min-height: calc(100dvh + 80px);
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   justify-content: center;
-  padding: calc(76px + 52px) 32px 120px;
+  padding: 80px 40px 70px;
   overflow: hidden;
   color: var(--white);
 }
@@ -1795,28 +1796,14 @@ p {
 .hero-split {
   position: relative;
   z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 64px;
   width: 100%;
   max-width: var(--hero-max-w);
   margin: 0 auto;
 }
 
 .hero-left {
-  flex: 1 1 52%;
-  max-width: 600px;
+  max-width: 540px;
   text-align: left;
-}
-
-.hero-right {
-  flex: 1 1 48%;
-  max-width: 520px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
 }
 
 .hero-badge {
@@ -1914,55 +1901,39 @@ p {
   outline-offset: 3px;
 }
 
-/* Hero diagram */
+/* Hero diagram — independently positioned decorative illustration */
 .hero-diagram {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  max-width: 480px;
-  margin: 0;
-  opacity: 0;
-  transform: translateY(18px);
-  animation: heroDiagramEnter 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.88s forwards;
-}
-
-.hero-hub-glow {
   position: absolute;
-  top: 42%;
-  left: 50%;
-  width: min(68%, 320px);
-  aspect-ratio: 1;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
+  z-index: 1;
+  top: 50%;
+  right: 40px;
+  width: 940px;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   pointer-events: none;
-  z-index: 0;
-  opacity: 0;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(109, 94, 248, 0.14) 0%,
-    rgba(79, 70, 229, 0.08) 42%,
-    transparent 72%
-  );
-  animation: heroHubGlowIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) 1s forwards;
+  transform: translate(60px, calc(-50% - 20px));
 }
 
-.hero-diagram-parallax {
-  position: relative;
-  z-index: 1;
-  will-change: transform;
-}
-
-.hero-diagram-svg {
-  position: relative;
-  z-index: 1;
+.hero-diagram-image {
   display: block;
   width: 100%;
   height: auto;
+  object-fit: contain;
+  object-position: center;
+  margin: 0;
+  pointer-events: auto;
 }
 
 .hero-diagram-caption {
   position: relative;
   z-index: 1;
+  width: 100%;
   margin-top: 16px;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 10px;
@@ -1973,85 +1944,6 @@ p {
   color: rgba(255, 255, 255, 0.48);
   opacity: 0;
   animation: heroFadeUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) 1.05s forwards;
-}
-
-.hero-line {
-  transition: stroke 0.2s ease, stroke-width 0.2s ease;
-}
-
-.hero-hub {
-  transform-origin: 220px 220px;
-  transform-box: view-box;
-  animation: heroHubFloat 4.8s ease-in-out 1.75s infinite;
-}
-
-.hero-hub-surface {
-  fill: #181624;
-  stroke: rgba(255, 255, 255, 0.14);
-}
-
-.hero-hub-lockup__genz,
-.hero-hub-lockup__rix {
-  pointer-events: none;
-}
-
-.hero-node {
-  cursor: pointer;
-  outline: none;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  animation: heroNodeEnter 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-.hero-node[data-node="design"] { animation-delay: 1.02s; }
-.hero-node[data-node="development"] { animation-delay: 1.08s; }
-.hero-node[data-node="marketing"] { animation-delay: 1.14s; }
-.hero-node[data-node="content"] { animation-delay: 1.2s; }
-.hero-node[data-node="events"] { animation-delay: 1.26s; }
-.hero-node[data-node="operations"] { animation-delay: 1.32s; }
-
-.hero-node .hero-node-bg {
-  transition: fill 0.2s ease, stroke 0.2s ease;
-}
-
-.hero-node-icon {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: heroNodePulse 2.8s ease-in-out infinite;
-}
-
-.hero-node[data-node="design"] .hero-node-icon { animation-delay: 0s; }
-.hero-node[data-node="development"] .hero-node-icon { animation-delay: 0.45s; }
-.hero-node[data-node="marketing"] .hero-node-icon { animation-delay: 0.9s; }
-.hero-node[data-node="content"] .hero-node-icon { animation-delay: 1.35s; }
-.hero-node[data-node="events"] .hero-node-icon { animation-delay: 1.8s; }
-.hero-node[data-node="operations"] .hero-node-icon { animation-delay: 2.25s; }
-
-.hero-node:focus-visible .hero-node-bg {
-  stroke: rgba(255, 255, 255, 0.55);
-}
-
-.hero-diagram.is-interactive .hero-node:not(.is-active) {
-  opacity: 0.55;
-}
-
-.hero-flow-dots {
-  opacity: 0;
-  animation: heroFlowDotsIn 0.55s ease 1.65s forwards;
-}
-
-.hero-flow-dots circle {
-  fill: var(--hero-accent);
-}
-
-.hero-diagram.is-interactive .hero-node.is-active .hero-node-bg {
-  fill: rgba(255, 255, 255, 0.08);
-  stroke: rgba(var(--hero-accent-rgb), 0.65);
-}
-
-.hero-diagram.is-interactive .hero-line.is-active {
-  stroke: rgba(var(--hero-accent-rgb), 0.55);
-  stroke-width: 2;
 }
 
 /* Hero entrance motion */
@@ -2080,40 +1972,6 @@ p {
 @keyframes heroWordReveal {
   from { opacity: 0; transform: translateY(110%); }
   to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes heroDiagramEnter {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes heroHubGlowIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@keyframes heroHubFloat {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-5px); }
-}
-
-@keyframes heroNodeEnter {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes heroNodePulse {
-  0%, 100% { opacity: 0.65; transform: scale(1); }
-  50%      { opacity: 1; transform: scale(1.06); }
-}
-
-@keyframes heroFlowDotsIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@keyframes heroLineDraw {
-  to { stroke-dashoffset: 0; }
 }
 
 .hero-badge {
@@ -2201,11 +2059,6 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   .hero-btn-secondary,
   .hero-diagram,
   .hero-diagram-caption,
-  .hero-hub,
-  .hero-node,
-  .hero-hub-glow,
-  .hero-flow-dots,
-  .hero-node-icon,
   .scroll-indicator {
     animation: none !important;
     opacity: 1 !important;
@@ -2216,18 +2069,9 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
     overflow: visible;
   }
 
-  .hero-diagram-parallax {
-    transform: none !important;
-    transition: none !important;
-  }
-
   .scroll-arrow {
     animation: none !important;
     opacity: 0.65 !important;
-  }
-
-  .hero-flow-dots {
-    display: none;
   }
 }
 
@@ -9272,25 +9116,26 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
 }
 
 /* ── RESPONSIVE: 1024px ── */
+@media (min-width: 1440px) {
+  .hero-diagram {
+    width: 980px;
+    transform: translate(60px, calc(-50% - 24px));
+  }
+}
+
 @media (max-width: 1024px) {
   .hero {
-    padding: calc(76px + 32px) 32px 80px;
-  }
-
-  .hero-split {
-    gap: 48px;
+    padding: 76px 32px 64px;
   }
 
   .hero-left {
     max-width: 480px;
   }
 
-  .hero-right {
-    max-width: 400px;
-  }
-
   .hero-diagram {
-    max-width: 400px;
+    width: 800px;
+    right: 32px;
+    transform: translate(48px, calc(-50% - 16px));
   }
 
   .why-genzrix-pin { top: 76px; }
@@ -9363,13 +9208,11 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   .hero {
     padding: calc(76px + 24px) 20px 64px;
     min-height: auto;
+    align-items: center;
   }
 
   .hero-split {
-    flex-direction: column;
-    align-items: center;
     text-align: center;
-    gap: 36px;
   }
 
   .hero-left {
@@ -9404,19 +9247,24 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
     padding: 13px 24px;
   }
 
-  .hero-right {
-    max-width: 100%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-
   .hero-diagram {
-    max-width: min(440px, 94vw);
+    position: static;
+    top: auto;
+    right: auto;
+    width: max-content;
+    max-width: none;
+    margin: 36px 0 0;
+    transform: none;
+    pointer-events: auto;
+    align-items: center;
   }
 
-  .hero-hub-glow {
-    width: min(84%, 360px);
+  .hero-diagram-image {
+    height: min(calc(100dvh - 260px), 520px);
+    width: auto;
+    max-width: min(680px, 96vw);
+    object-position: center;
+    transform: none;
   }
 
   .hero-diagram-caption {
@@ -9615,7 +9463,22 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   }
 
   .hero-diagram {
-    max-width: min(360px, 94vw);
+    position: static;
+    top: auto;
+    right: auto;
+    max-width: none;
+    width: max-content;
+    margin: 32px 0 0;
+    transform: none;
+    align-items: center;
+  }
+
+  .hero-diagram-image {
+    height: min(calc(100dvh - 240px), 400px);
+    width: auto;
+    max-width: min(520px, 96vw);
+    object-position: center;
+    transform: none;
   }
 }
 
@@ -9644,13 +9507,20 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   }
 
   .hero-diagram {
-    max-width: min(300px, 94vw);
+    max-width: none;
+    width: max-content;
+    margin: 0;
+    align-items: center;
+  }
+
+  .hero-diagram-image {
+    height: min(calc(100dvh - 220px), 320px);
+    width: auto;
+    max-width: min(420px, 96vw);
+    object-position: center;
+    transform: none;
   }
 }
-
-
-
-/* ── Footer wrapper (BEM layout — index, premium dark glass) ── */
 .footer:has(.footer__top),
 .footer:not(:has(.footer__top)) {
   position: relative;
@@ -10232,7 +10102,18 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   .hero { padding: calc(60px + 20px) 12px 40px; }
 
   .hero-diagram {
-    max-width: 220px;
+    max-width: none;
+    width: max-content;
+    margin: 0;
+    align-items: center;
+  }
+
+  .hero-diagram-image {
+    height: min(calc(100dvh - 200px), 280px);
+    width: auto;
+    max-width: min(360px, 96vw);
+    object-position: center;
+    transform: none;
   }
 
   .hero-ctas .hero-btn-primary,
