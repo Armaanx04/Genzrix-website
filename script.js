@@ -4,6 +4,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { initSiteBackground } from './site-background.js';
 import { initHeroShapeGrid } from './hero-shapegrid.js';
+import { initHeroNetworkAmbient } from './hero-network-ambient.js';
 import { initServicesPage } from './services-page.js';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -902,6 +903,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const heroShapeGridEl = document.querySelector('[data-hero-shapegrid]');
   if (heroShapeGridEl) initHeroShapeGrid(heroShapeGridEl);
 
+  const heroNetworkSvg = document.querySelector('.hero-network-svg');
+  if (heroNetworkSvg) initHeroNetworkAmbient(heroNetworkSvg);
+
   /* ── ANIMATED COUNTERS ── */
   const statEls = document.querySelectorAll('.stat-count');
   if (statEls.length) {
@@ -1624,7 +1628,7 @@ document.addEventListener('DOMContentLoaded', () => {
           p.vy -= Math.sin(angle) * force;
           p.vx += (Math.random() - 0.5) * 0.9;
           p.vy += (Math.random() - 0.5) * 0.9;
-        } else {
+          } else {
           p.vx += (p.tx - p.x) * SPRING;
           p.vy += (p.ty - p.y) * SPRING;
           p.vx *= DAMP;
