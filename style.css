@@ -3953,11 +3953,12 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
 }
 
 .services-showcase-tab-label {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.25;
   text-align: center;
-  white-space: nowrap;
+  max-width: 92px;
+  white-space: normal;
 }
 
 .services-showcase-card {

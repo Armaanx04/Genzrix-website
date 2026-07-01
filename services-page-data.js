@@ -55,7 +55,7 @@ export const SERVICES = [
   {
     id: 'marketing',
     num: '04',
-    title: 'Digital Marketing & Growth',
+    title: 'Digital Marketing',
     description:
       'We plan and execute digital marketing campaigns built around your specific growth goals. From paid ads to organic content strategies — we focus on measurable outcomes, not vanity metrics.',
     includes: [
@@ -89,7 +89,7 @@ export const SERVICES = [
   {
     id: 'app',
     num: '06',
-    title: 'App Development',
+    title: 'Web/Mobile App Development',
     description:
       'We develop web and mobile applications that are robust, scalable, and genuinely enjoyable to use. From MVP to full-featured product — we ship code that works, on time.',
     includes: [
@@ -106,7 +106,7 @@ export const SERVICES = [
   {
     id: 'content',
     num: '07',
-    title: 'Content Production',
+    title: 'Data Analytics',
     description:
       'We produce photography, video, and written content that tells your story with intent. Every asset is created with distribution in mind — built to perform on platforms, not just fill a folder.',
     includes: [
@@ -123,7 +123,7 @@ export const SERVICES = [
   {
     id: 'events',
     num: '08',
-    title: 'Event Execution',
+    title: 'Media & Event Solutions',
     description:
       'We plan and execute on-ground events from concept to close. Launches, college fests, corporate activations, or community meetups — our ground teams handle logistics, design, and live operations.',
     includes: [

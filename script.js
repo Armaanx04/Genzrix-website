@@ -1298,6 +1298,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const panelsWrap = serviceShowcase.querySelector('.services-showcase-panels');
     let currentIndex = 0;
     let scrollTicking = false;
+    let isServiceTransitioning = false;
+    let transitionTimers = [];
     const DURATION = 550;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -1406,8 +1408,29 @@ document.addEventListener('DOMContentLoaded', () => {
       visual.style.setProperty('--sv-parallax-x', '0px');
     };
 
-    const switchService = (index) => {
+    const clearTransitionTimers = () => {
+      transitionTimers.forEach((id) => window.clearTimeout(id));
+      transitionTimers = [];
+      isServiceTransitioning = false;
+    };
+
+    const snapPanelsToIndex = (index) => {
+      panels.forEach((panel, i) => {
+        panel.classList.remove('is-exiting');
+        panel.classList.toggle('is-active', i === index);
+      });
+    };
+
+    const switchService = (index, { fromUser = false } = {}) => {
+      if (!fromUser && isServiceTransitioning) return;
       if (index < 0 || index >= panels.length || index === currentIndex) return;
+
+      if (fromUser && isServiceTransitioning) {
+        clearTransitionTimers();
+        snapPanelsToIndex(currentIndex);
+      }
+
+      isServiceTransitioning = true;
 
       const prevPanel = panels[currentIndex];
       const nextPanel = panels[index];
@@ -1427,20 +1450,30 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!reducedMotion) prevPanel.classList.add('is-exiting');
 
       nextPanel.classList.remove('is-active', 'is-exiting');
-      void nextPanel.offsetWidth;
-      requestAnimationFrame(() => {
+
+      const enterDelay = reducedMotion ? 150 : DURATION;
+
+      transitionTimers.push(window.setTimeout(() => {
+        prevPanel.classList.remove('is-exiting');
+
+        void nextPanel.offsetWidth;
         requestAnimationFrame(() => {
           nextPanel.classList.add('is-active');
           restartPanelVisuals(nextPanel);
         });
-      });
 
-      window.setTimeout(() => {
-        prevPanel.classList.remove('is-exiting');
-      }, reducedMotion ? 150 : DURATION);
+        transitionTimers.push(window.setTimeout(() => {
+          isServiceTransitioning = false;
+        }, enterDelay));
+      }, enterDelay));
 
       currentIndex = index;
       updateVisualParallax(index);
+    };
+
+    const activateFromUser = (index) => {
+      switchService(index, { fromUser: true });
+      scrollToIndex(index);
     };
 
     const scrollToIndex = (index) => {
@@ -1453,14 +1486,16 @@ document.addEventListener('DOMContentLoaded', () => {
       if (scrollTicking) return;
       scrollTicking = true;
       requestAnimationFrame(() => {
-        switchService(getIndexFromScroll());
+        if (!isServiceTransitioning) {
+          switchService(getIndexFromScroll());
+        }
         updateVisualParallax(currentIndex);
         scrollTicking = false;
       });
     };
 
     tabs.forEach((tab, index) => {
-      tab.addEventListener('click', () => scrollToIndex(index));
+      tab.addEventListener('click', () => activateFromUser(index));
       tab.addEventListener('keydown', (e) => {
         let nextIndex = null;
         if (e.key === 'ArrowRight') nextIndex = (index + 1) % tabs.length;
@@ -1470,7 +1505,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (nextIndex !== null) {
           e.preventDefault();
           tabs[nextIndex].focus();
-          scrollToIndex(nextIndex);
+          activateFromUser(nextIndex);
         }
       });
     });
