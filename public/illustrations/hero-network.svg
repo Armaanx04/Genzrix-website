@@ -174,10 +174,10 @@
   </defs>
 
   <g id="hero-network">
-  <g id="background">
+    <g id="background">
     <rect x="302" y="302" width="995" height="995" fill="url(#dot-grid)"/>
     <circle id="center-ambient-glow-circle" cx="800" cy="800" r="165" fill="url(#center-ambient-glow)"/>
-  </g>
+    </g>
 
   <g id="background-rings">
     <circle cx="800" cy="800" r="89" fill="none" stroke="rgba(255,48,73,0.329)" stroke-width="1"/>
@@ -429,7 +429,7 @@
         <g filter="url(#cl-filter13_d_91_1894)">
         <path d="M140.105 166H135L137.971 171H143L140.105 166Z" fill="#C1200D"/>
         </g>
-      </g>
+    </g>
     </g>
   </g>
 

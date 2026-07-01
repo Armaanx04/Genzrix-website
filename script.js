@@ -1456,7 +1456,7 @@ document.addEventListener('DOMContentLoaded', () => {
       transitionTimers.push(window.setTimeout(() => {
         prevPanel.classList.remove('is-exiting');
 
-        void nextPanel.offsetWidth;
+      void nextPanel.offsetWidth;
         requestAnimationFrame(() => {
           nextPanel.classList.add('is-active');
           restartPanelVisuals(nextPanel);
@@ -1487,7 +1487,7 @@ document.addEventListener('DOMContentLoaded', () => {
       scrollTicking = true;
       requestAnimationFrame(() => {
         if (!isServiceTransitioning) {
-          switchService(getIndexFromScroll());
+        switchService(getIndexFromScroll());
         }
         updateVisualParallax(currentIndex);
         scrollTicking = false;
