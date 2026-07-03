@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Execution Model Overlay</title>
+  <style>
+    body { margin: 0; background: #05070a; }
+    .wrap { position: relative; width: 1200px; margin: 24px auto; }
+    .wrap img { display: block; width: 1200px; height: auto; opacity: 0.5; }
+    .wrap svg { position: absolute; inset: 0; width: 1200px; height: 680px; }
+    path { fill: none; stroke: url(#grad); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <img src="../assets/c__Users_Dell_AppData_Roaming_Cursor_User_workspaceStorage_975ea81794c53c3822a295ba09e870d9_images_WhatsApp_Image_2026-07-03_at_12.51.00_AM-9c4576c0-fe19-4994-afec-275c99fadbf2.png" alt="reference" width="1200" />
+    <svg viewBox="0 0 1200 680" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="grad" gradientUnits="userSpaceOnUse" x1="60" y1="340" x2="1140" y2="340">
+          <stop offset="0%" stop-color="#FF4D6D" />
+          <stop offset="46%" stop-color="#FF4D6D" />
+          <stop offset="54%" stop-color="#4F7BFF" />
+          <stop offset="100%" stop-color="#4F7BFF" />
+        </linearGradient>
+      </defs>
+      <path id="p1" d="" />
+      <path id="p2" d="" />
+      <path id="p3" d="" />
+      <path id="p4" d="" />
+      <path id="p5" d="" />
+    </svg>
+  </div>
+  <script type="module">
+    import { EXECUTION_MODEL_SEGMENTS } from '../execution-model-path.js';
+    ['p1', 'p2', 'p3', 'p4', 'p5'].forEach((id, i) => {
+      document.getElementById(id).setAttribute('d', EXECUTION_MODEL_SEGMENTS[`s${i + 1}`]);
+    });
+  </script>
+</body>
+</html>

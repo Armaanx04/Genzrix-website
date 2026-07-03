@@ -6,6 +6,7 @@ import { initSiteBackground } from './site-background.js';
 import { initHeroShapeGrid } from './hero-shapegrid.js';
 import { initHeroNetworkAmbient } from './hero-network-ambient.js';
 import { initServicesPage } from './services-page.js';
+import { mountExecutionModel } from './execution-model.js';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -1539,6 +1540,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   mountServicesShowcase();
+  mountExecutionModel();
 
   initServicesPage();
 
