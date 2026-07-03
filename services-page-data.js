@@ -1,5 +1,7 @@
 /** Service content — single source for Services page copy (from homepage showcase). */
 
+export { SERVICE_PACKAGES } from './services-page-packages.js';
+
 export const SERVICES = [
   {
     id: 'design',
