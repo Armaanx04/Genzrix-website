@@ -1092,6 +1092,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      if (!supabase) {
+        statusEl.textContent = 'Form is temporarily unavailable. Please email us directly.';
+        statusEl.className = 'form-status error';
+        return;
+      }
+
       btn.disabled = true;
       if (btnText) btnText.style.display = 'none';
       if (btnLoading) btnLoading.style.display = 'inline-flex';
@@ -1263,6 +1269,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (checkedDomains.length === 0) {
         statusEl.textContent = 'Please select at least one domain.';
+        statusEl.className = 'form-status error';
+        return;
+      }
+
+      if (!supabase) {
+        statusEl.textContent = 'Form is temporarily unavailable. Please try again later.';
         statusEl.className = 'form-status error';
         return;
       }
