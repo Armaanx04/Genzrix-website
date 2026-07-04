@@ -16,6 +16,7 @@ export const SERVICE_PACKAGES = {
       { feature: 'Responsive Design', core: '✓', prime: '✓', elite: '✓' },
       { feature: 'Design System', core: '—', prime: 'Basic', elite: 'Complete' },
       { feature: 'User Journey Mapping', core: '—', prime: '✓', elite: '✓' },
+      { feature: 'Motion Design & Animations', core: '—', prime: '—', elite: '✓' },
       { feature: 'UX Consultation', core: '30 min', prime: '2 Sessions', elite: 'Unlimited' },
       { feature: 'Revisions', core: '2', prime: '5', elite: 'Unlimited' },
     ],
