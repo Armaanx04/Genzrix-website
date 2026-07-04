@@ -6,6 +6,7 @@ import { initSiteBackground } from './site-background.js';
 import { initHeroShapeGrid } from './hero-shapegrid.js';
 import { initHeroNetworkAmbient } from './hero-network-ambient.js';
 import { initServicesPage } from './services-page.js';
+import { initMultiServicePackages } from './services-multi-packages.js';
 import { mountExecutionModel } from './execution-model.js';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -1543,6 +1544,9 @@ document.addEventListener('DOMContentLoaded', () => {
   mountExecutionModel();
 
   initServicesPage();
+  initMultiServicePackages();
+  const multiPackagesSection = document.querySelector('.services-packages');
+  if (multiPackagesSection) observeFadeUps(multiPackagesSection);
 
   /* ── FOOTER: Dust Text + Cube Grid (Alina) ── */
   (function () {
