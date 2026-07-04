@@ -81,7 +81,7 @@ function initWhyGenzrixStack() {
 
     const mobilePx = Math.round(90 * PACING.baseDetents.mobile);
     let px = Math.round(PACING.measuredPinPxPerWheel * detents);
-    if (w <= 768) px = mobilePx;
+    if (w <= 768) px = Math.round(mobilePx * 0.7);
 
     return reducedMotion ? Math.round(px * 0.65) : px;
   };
@@ -97,7 +97,8 @@ function initWhyGenzrixStack() {
   /** Reading plateaus after cards 2 & 3 — same px unit as 1→2 (mirrors card-4 hold + summary rhythm). */
   const getReadPlateauPx = () => {
     const plateauPx = getTransitionStepPx();
-    return PACING.readPlateauWeights.map(() => plateauPx);
+    const mobileScale = window.innerWidth <= 768 ? 0.62 : 1;
+    return PACING.readPlateauWeights.map(() => Math.round(plateauPx * mobileScale));
   };
 
   const getCardSegments = () => {
@@ -132,6 +133,9 @@ function initWhyGenzrixStack() {
       return getCardSegments().reduce((sum, segment) => sum + segment.length, 0);
     },
     getHoldHeight() {
+      if (window.innerWidth <= 768) {
+        return window.innerHeight * (reducedMotion ? 0.22 : 0.36);
+      }
       return window.innerHeight * PACING.holdVh;
     },
     getSummaryHeight() {
@@ -580,6 +584,8 @@ function initWhyGenzrixRingDistribution() {
   } else {
     requestAnimationFrame(apply);
   }
+
+  window.addEventListener('resize', () => requestAnimationFrame(apply), { passive: true });
 }
 
 initWhyGenzrixStack();
@@ -1564,6 +1570,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let hovering = false;
     let dustRaf = null;
 
+    const isDustTapMode = () =>
+      window.matchMedia('(max-width: 768px) and (hover: none), (max-width: 768px) and (pointer: coarse)').matches;
+
+    function updateDustHint() {
+      if (!hint) return;
+      hint.textContent = isDustTapMode()
+        ? 'tap to scatter · tap again to reform'
+        : 'hover to scatter · move away to reform';
+    }
+
     function resize() {
       const dpr = window.devicePixelRatio || 1;
       W = wrap.offsetWidth;
@@ -1705,20 +1721,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     wrap.addEventListener('mouseenter', () => {
+      if (isDustTapMode()) return;
       hovering = true;
       if (hint) hint.style.opacity = '0';
     });
     wrap.addEventListener('mouseleave', () => {
+      if (isDustTapMode()) return;
       hovering = false;
       mouse = { x: -9999, y: -9999 };
       if (hint) hint.style.opacity = '1';
     });
     wrap.addEventListener('mousemove', (e) => {
+      if (isDustTapMode()) return;
       const r = wrap.getBoundingClientRect();
       mouse.x = e.clientX - r.left;
       mouse.y = e.clientY - r.top;
     });
     wrap.addEventListener('touchmove', (e) => {
+      if (isDustTapMode()) return;
       e.preventDefault();
       hovering = true;
       const r = wrap.getBoundingClientRect();
@@ -1726,13 +1746,34 @@ document.addEventListener('DOMContentLoaded', () => {
       mouse.y = e.touches[0].clientY - r.top;
     }, { passive: false });
     wrap.addEventListener('touchend', () => {
+      if (isDustTapMode()) return;
       hovering = false;
       mouse = { x: -9999, y: -9999 };
     });
+    wrap.addEventListener('click', (e) => {
+      if (!isDustTapMode()) return;
+      hovering = !hovering;
+      const r = wrap.getBoundingClientRect();
+      if (hovering) {
+        mouse.x = e.clientX - r.left;
+        mouse.y = e.clientY - r.top;
+        if (hint) hint.style.opacity = '0';
+      } else {
+        mouse = { x: -9999, y: -9999 };
+        if (hint) hint.style.opacity = '1';
+      }
+    });
 
+    updateDustHint();
     resize();
     window.addEventListener('resize', () => {
       cancelAnimationFrame(dustRaf);
+      updateDustHint();
+      if (!isDustTapMode()) {
+        hovering = false;
+        mouse = { x: -9999, y: -9999 };
+        if (hint) hint.style.opacity = '1';
+      }
       resize();
       dustTick();
     });
