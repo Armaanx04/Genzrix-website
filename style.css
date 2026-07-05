@@ -3296,26 +3296,26 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   line-height: 1.78;
 }
 
-.about-founder-lede strong {
+.about-founder-body .about-founder-lede strong {
   font-weight: 600;
-  color: #ffffff;
+  color: var(--ds-accent);
 }
 
 .about-founder-group p + p {
   margin-top: clamp(28px, 3.2vh, 36px);
 }
 
-.about-founder-group p strong {
+.about-founder-body .about-founder-group p strong {
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--ds-accent);
 }
 
-.about-founder-closing {
+.about-founder-body p.about-founder-closing {
   margin: clamp(36px, 4vh, 48px) 0 0;
   font-size: clamp(17px, 1.25vw, 20px);
   font-weight: 600;
   line-height: 1.82;
-  color: rgba(255, 255, 255, 0.92);
+  color: var(--ds-accent);
 }
 
 .about-founder-highlight {
