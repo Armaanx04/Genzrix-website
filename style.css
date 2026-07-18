@@ -3744,16 +3744,6 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
 
 .footer-contact-email:hover { color: var(--white); }
 
-.footer-contact-phone {
-  font-size: 14px;
-  color: rgba(255,255,255,0.55);
-  margin-bottom: 6px;
-  display: block;
-  transition: color 0.2s;
-}
-
-.footer-contact-phone:hover { color: var(--white); }
-
 .footer-contact-location { font-size: 12px; color: rgba(255,255,255,0.35); margin-bottom: 20px; }
 
 .footer-socials { display: flex; gap: 10px; }
