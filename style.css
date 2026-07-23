@@ -2,7 +2,7 @@
    GENZRIX V3 — PREMIUM DESIGN SYSTEM
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+/* Fonts: self-hosted via /fonts/fonts.css (linked from HTML; no @import) */
 
 /* ── RESET & BASE ── */
 *, *::before, *::after {
@@ -1515,6 +1515,7 @@ p {
   display: block;
   height: 52px;
   width: auto;
+  aspect-ratio: 367 / 352;
   object-fit: contain;
   flex-shrink: 0;
 }
@@ -1524,6 +1525,7 @@ p {
   height: 22px;
   width: auto;
   max-width: 144px;
+  aspect-ratio: 527 / 66;
   object-fit: contain;
   flex-shrink: 1;
   background: transparent;
@@ -1861,6 +1863,16 @@ p {
   width: 100%;
   max-width: var(--hero-max-w);
   margin: 0 auto;
+  /* LCP: keep hero H1 painted immediately — no opacity:0 startup gate */
+  opacity: 1;
+  animation: none;
+}
+
+/* Non-LCP hero chrome retains the startup fade */
+.hero-badge,
+.hero-subtext,
+.hero-ctas,
+.hero-right {
   opacity: 0;
   animation: heroStartupReveal var(--hero-startup-fade, 700ms) cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
@@ -2126,16 +2138,6 @@ p {
   animation: none;
 }
 
-.hero-badge {
-  opacity: 1;
-  animation: none;
-}
-
-.hero-subtext {
-  opacity: 1;
-  animation: none;
-}
-
 /* Nav over dark hero — slightly more translucent at top */
 body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   background:
@@ -2207,6 +2209,8 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   .hero-word,
   .hero-badge,
   .hero-subtext,
+  .hero-ctas,
+  .hero-right,
   .hero-btn-primary,
   .hero-btn-secondary,
   .hero-diagram,
@@ -3685,6 +3689,7 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
 .footer-logo-img {
   height: 60px;
   width: auto;
+  aspect-ratio: 367 / 352;
   object-fit: contain;
   object-position: center;
   margin-bottom: 14px;
@@ -11321,6 +11326,7 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
 .footer__logo-mark {
   height: 60px;
   width: auto;
+  aspect-ratio: 367 / 352;
   object-fit: contain;
   object-position: center;
   display: block;

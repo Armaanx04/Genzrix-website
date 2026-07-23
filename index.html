@@ -49,6 +49,9 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="preload" href="/fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/fonts/fonts.css" />
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
@@ -59,8 +62,11 @@
     <div class="nav-inner">
       <div class="nav-logo-wrap">
         <a href="index.html" class="nav-logo-link nav-brand-lockup" aria-label="GenZrix home">
-          <img src="/gz-logo.svg" alt="" class="nav-logo-img" decoding="async" aria-hidden="true">
-          <img src="/genzrix-wordmark.png" alt="GenZrix" class="nav-wordmark-img" decoding="async">
+          <img src="/gz-logo.svg" alt="" class="nav-logo-img" width="367" height="352" decoding="async" aria-hidden="true">
+          <picture>
+            <source type="image/webp" srcset="/genzrix-wordmark.webp" width="527" height="66" />
+            <img src="/genzrix-wordmark.png" alt="GenZrix" class="nav-wordmark-img" width="527" height="66" decoding="async" fetchpriority="high">
+          </picture>
         </a>
       </div>
       <nav class="nav-links" aria-label="Primary navigation">
@@ -792,7 +798,7 @@
                   </g>
                 </svg>
                 <div class="why-genzrix-logo-medallion">
-                  <img src="/gz-logo-brand.svg" alt="GenZrix symbol" class="why-genzrix-logo-mark" decoding="async">
+                  <img src="/gz-logo-brand.svg" alt="GenZrix symbol" class="why-genzrix-logo-mark" width="367" height="352" decoding="async">
                 </div>
               </div>
             </div>
@@ -1184,12 +1190,12 @@
 
     <div class="idea-middle">
       <div class="icon-group"> 
-        <div class="icon"><img src="./public/icons/github.svg" alt="GitHub"></div>
-        <div class="icon"><img src="./public/icons/figma.svg" alt="Figma"></div>
-        <div class="icon"><img src="./public/icons/cursor.svg" alt="Cursor"></div>
-        <div class="icon"><img src="./public/icons/adobe.svg" alt="Adobe"></div>
-        <div class="icon"><img src="./public/icons/chrome.svg" alt="Chrome"></div>
-        <div class="icon"><img src="./public/icons/flutter.svg" alt="Flutter"></div>
+        <div class="icon"><img src="/icons/github.svg" alt="GitHub" width="24" height="24" decoding="async"></div>
+        <div class="icon"><img src="/icons/figma.svg" alt="Figma" width="24" height="24" decoding="async"></div>
+        <div class="icon"><img src="/icons/cursor.svg" alt="Cursor" width="24" height="24" decoding="async"></div>
+        <div class="icon"><img src="/icons/adobe.svg" alt="Adobe" width="24" height="24" decoding="async"></div>
+        <div class="icon"><img src="/icons/chrome.svg" alt="Chrome" width="24" height="24" decoding="async"></div>
+        <div class="icon"><img src="/icons/flutter.svg" alt="Flutter" width="24" height="24" decoding="async"></div>
       </div>
 
       <p class="idea-heading">
@@ -1221,7 +1227,7 @@
 
     <div class="footer__brand">
       <div class="footer__logo">
-        <img src="/gz-logo.svg" alt="GenZrix" class="footer__logo-mark" decoding="async">
+        <img src="/gz-logo.svg" alt="GenZrix" class="footer__logo-mark" width="367" height="352" decoding="async">
       </div>
 
       <p class="footer__slogan">EMPOWER. <span class="footer__slogan-accent">EXECUTE.</span> ELEVATE.</p>
