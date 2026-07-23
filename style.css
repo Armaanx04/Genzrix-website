@@ -374,11 +374,11 @@ main {
 .card h3,
 .card h4,
 .why-card h4,
-.client-card h4,
+.client-card h3,
 .service-card h4,
 .package-card h3,
 .value-card h3,
-.about-problem-card h4,
+.about-problem-card h3,
 .services-showcase-panel-head h3,
 .faq-question,
 .why-genzrix-stack-card h3 {
@@ -513,7 +513,7 @@ main {
 }
 
 .ds-section--exists .about-problem-icon,
-.ds-section--exists .about-problem-card h4,
+.ds-section--exists .about-problem-card h3,
 .ds-section--exists .about-problem-card p {
   z-index: 3;
 }
@@ -598,8 +598,8 @@ main {
   stroke-width: 2.4;
 }
 
-.ds-section--exists .about-problem-card:nth-child(2) h4,
-.ds-section--exists .about-problem-card:nth-child(3) h4 {
+.ds-section--exists .about-problem-card:nth-child(2) h3,
+.ds-section--exists .about-problem-card:nth-child(3) h3 {
   font-size: 24px;
 }
 
@@ -656,7 +656,7 @@ main {
 .ds-section--soft .section-header h2,
 .ds-section--about .why-genzrix-headline,
 .ds-section--process .how-step h3,
-.ds-section--model .model-item h4 {
+.ds-section--model .model-item h3 {
   color: var(--ds-text);
 }
 
@@ -3090,7 +3090,7 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   flex-shrink: 0;
 }
 
-.about-problem-card h4 {
+.about-problem-card h3 {
   letter-spacing: -0.01em;
 }
 
@@ -3555,7 +3555,7 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   margin-top: 8px;
 }
 
-.model-item h4 { font-size: 15px; margin-bottom: 5px; }
+.model-item h3 { font-size: 15px; margin-bottom: 5px; }
 .model-item p  { font-size: 13px; line-height: 1.7; }
 
 /* ── CLIENTS GRID ── */
@@ -3710,7 +3710,7 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   max-width: 260px;
 }
 
-.footer h5 {
+.footer-grid > div > p:first-child {
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
   font-size: 11px;
@@ -11398,7 +11398,7 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
 .footer__nav-link:hover { color: #f1ede7; }
 
 /* ── BEM footer typography — explicit colors (overrides legacy .footer rules) ── */
-.footer:has(.footer__top) h5.footer__nav-heading {
+.footer:has(.footer__top) p.footer__nav-heading {
   font-family: 'Inter', sans-serif;
   font-size: 0.88rem;
   font-weight: 700;
@@ -11608,7 +11608,7 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
   gap: 48px;
 }
 
-.idea-section .idea-top h1 {
+.idea-section .idea-top.h1 > div:first-child {
   font-family: 'Space Grotesk', sans-serif;
   font-size: clamp(32px, 7vw, 86px) !important;
   line-height: 0.95;
@@ -11804,7 +11804,7 @@ body:has(main > section.hero:first-child) .nav:not(.scrolled) {
     gap: 18px;
   }
 
-  .idea-section .idea-top h1 {
+  .idea-section .idea-top.h1 > div:first-child {
     font-size: clamp(28px, 7.5vw, 38px) !important;
     line-height: 1.05;
   }
